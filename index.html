@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#2563eb">
+    <title>English Expression Quiz</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-around;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .controls {
+            background: white;
+            border-radius: 15px;
+            padding: 0;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .controls-header {
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            background: #f9fafb;
+        }
+
+        .controls-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin: 0;
+        }
+
+        .controls-toggle {
+            font-size: 18px;
+            transition: transform 0.3s;
+        }
+
+        .controls-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .controls-content {
+            padding: 20px;
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .controls-content.collapsed {
+            max-height: 0;
+            padding: 0 20px;
+        }
+
+        .mode-switch {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .mode-btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .filters {
+            display: grid;
+            gap: 10px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-chip {
+            padding: 6px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .filter-chip.active {
+            background: #dbeafe;
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            min-height: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .card-category {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 11px;
+            color: #6b7280;
+            background: #f3f4f6;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .question {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .formality-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+
+        .formality-email {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .formality-meeting {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .formality-casual {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .answer {
+            margin-top: 30px;
+        }
+
+        .answer-main {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 15px;
+        }
+
+        .answer-alternatives {
+            font-size: 16px;
+            color: #6b7280;
+            margin-bottom: 15px;
+        }
+
+        .answer-example {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .answer-example-en-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .answer-example-en {
+            font-style: italic;
+            color: #374151;
+            flex: 1;
+        }
+
+        .speak-btn {
+            background: #3b82f6;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .speak-btn:hover {
+            background: #2563eb;
+            transform: scale(1.05);
+        }
+
+        .speak-btn:active {
+            transform: scale(0.95);
+        }
+
+        .speak-btn.speaking {
+            background: #ef4444;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .answer-example-ja {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .answer-meta {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress {
+            font-size: 14px;
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .card {
+                padding: 30px 20px;
+                min-height: 350px;
+            }
+
+            .question {
+                font-size: 24px;
+            }
+
+            .answer-main {
+                font-size: 26px;
+            }
+        }
+
+        .install-prompt {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+
+        .install-prompt.show {
+            display: block;
+        }
+
+        .install-prompt h3 {
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+
+        .install-prompt p {
+            color: #6b7280;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .btn-install {
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 English Expression Quiz</h1>
+        </div>
+
+        <div class="install-prompt" id="installPrompt">
+            <h3>📱 アプリとして追加</h3>
+            <p>ホーム画面に追加すると、アプリのように使えます</p>
+            <button class="btn-install" id="installButton">ホーム画面に追加</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="todayCount">0</div>
+                <div class="stat-label">今日の学習</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalCount">0</div>
+                <div class="stat-label">累計</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="masteredCount">0</div>
+                <div class="stat-label">習得済み</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="controls-header" id="controlsHeader">
+                <h3>⚙️ 設定とフィルター</h3>
+                <span class="controls-toggle" id="controlsToggle">▼</span>
+            </div>
+            <div class="controls-content" id="controlsContent">
+                <div class="mode-switch">
+                    <button class="mode-btn active" data-mode="ja-en">日本語 → 英語</button>
+                    <button class="mode-btn" data-mode="en-ja">英語 → 日本語</button>
+                </div>
+
+                <div class="filters">
+                    <div class="filter-group">
+                        <div class="filter-label">カテゴリ</div>
+                        <div class="filter-options" id="categoryFilters"></div>
+                    </div>
+                    <div class="filter-group">
+                        <div class="filter-label">フォーマル度</div>
+                        <div class="filter-options">
+                            <div class="filter-chip active" data-filter="formality" data-value="all">すべて</div>
+                            <div class="filter-chip" data-filter="formality" data-value="email">📧 Email</div>
+                            <div class="filter-chip" data-filter="formality" data-value="meeting">💼 Meeting</div>
+                            <div class="filter-chip" data-filter="formality" data-value="casual">👥 Casual</div>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <div class="filter-label">習得レベル</div>
+                        <div class="filter-options">
+                            <div class="filter-chip active" data-filter="level" data-value="all">すべて</div>
+                            <div class="filter-chip" data-filter="level" data-value="learning">学習中</div>
+                            <div class="filter-chip" data-filter="level" data-value="mastered">習得済み</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress" id="progress"></div>
+
+        <div class="card" id="quizCard">
+            <div class="card-category" id="cardCategory"></div>
+            <div class="card-content">
+                <div id="questionSection">
+                    <div class="question" id="questionText"></div>
+                    <div id="formalityBadge"></div>
+                </div>
+
+                <div id="answerSection" class="hidden">
+                    <div class="answer">
+                        <div class="answer-main" id="answerMain"></div>
+                        <div class="answer-alternatives" id="answerAlternatives"></div>
+                        <div class="answer-example">
+                            <div class="answer-example-en-wrapper">
+                                <div class="answer-example-en" id="exampleEn"></div>
+                                <button class="speak-btn" id="speakBtn" title="例文を音声で聞く">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="answer-example-ja" id="exampleJa"></div>
+                        </div>
+                        <div class="answer-meta" id="answerMeta"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" id="showAnswerBtn">答えを見る</button>
+                <button class="btn btn-success hidden" id="correctBtn">✓ 正解</button>
+                <button class="btn btn-danger hidden" id="wrongBtn">× 誤答</button>
+                <button class="btn btn-secondary hidden" id="masterBtn">マスター</button>
+            </div>
+        </div>
+
+        <div class="empty-state hidden" id="emptyState">
+            <div class="empty-state-icon">📚</div>
+            <h2>フレーズがありません</h2>
+            <p>フィルタ条件を変更してみてください</p>
+        </div>
+    </div>
+
+    <script>
+        let phrases = [];
+        let currentPhrase = null;
+        let currentMode = 'ja-en';
+        let filters = {
+            category: 'all',
+            formality: 'all',
+            level: 'all'
+        };
+        let filteredPhrases = [];
+        let currentIndex = 0;
+        let deferredPrompt;
+        let isSpeaking = false;
+
+        // LocalStorage keys
+        const STORAGE_KEY = 'englishQuizData';
+        const STATS_KEY = 'englishQuizStats';
+
+        // Phrases data (embedded)
+        const PHRASES_DATA = {
+            "phrases": [
+                {
+                    "id": "general-001",
+                    "category": "General Business",
+                    "japanese": "～していただけますでしょうか",
+                    "english": "Could you please...?",
+                    "formality": "meeting",
+                    "alternatives": ["Would you be able to...?", "Can you...?"],
+                    "example": "Could you please send me the latest version?",
+                    "exampleJa": "最新版を送っていただけますか",
+                    "nuance": "標準的なビジネス依頼",
+                    "scene": "通常の業務依頼"
+                },
+                {
+                    "id": "general-002",
+                    "category": "General Business",
+                    "japanese": "～していただけますと幸いです",
+                    "english": "I would appreciate it if you could...",
+                    "formality": "email",
+                    "alternatives": ["It would be great if you could..."],
+                    "example": "I would appreciate it if you could provide your feedback by end of this week.",
+                    "exampleJa": "今週末までにフィードバックをいただけますと幸いです",
+                    "nuance": "最も丁寧、感謝を込めた依頼",
+                    "scene": "重要な依頼、上司、社外"
+                },
+                {
+                    "id": "general-003",
+                    "category": "General Business",
+                    "japanese": "おっしゃる通りです",
+                    "english": "You're absolutely right.",
+                    "formality": "meeting",
+                    "alternatives": ["That's correct.", "Exactly."],
+                    "example": "You're absolutely right. We should prioritize that.",
+                    "exampleJa": "おっしゃる通りです。それを優先すべきですね",
+                    "nuance": "強い同意",
+                    "scene": "会議、ディスカッション"
+                },
+                {
+                    "id": "general-004",
+                    "category": "General Business",
+                    "japanese": "確かに",
+                    "english": "That's a good point.",
+                    "formality": "meeting",
+                    "alternatives": ["I see what you mean.", "That makes sense."],
+                    "example": "That's a good point. We should consider that.",
+                    "exampleJa": "確かに良い指摘ですね。それも考慮すべきですね",
+                    "nuance": "相手の意見を評価しながら同意",
+                    "scene": "会議、ディスカッション"
+                },
+                {
+                    "id": "general-005",
+                    "category": "General Business",
+                    "japanese": "了解です",
+                    "english": "Got it.",
+                    "formality": "casual",
+                    "alternatives": ["Understood.", "Will do."],
+                    "example": "Got it. I'll take care of that.",
+                    "exampleJa": "了解です。それは私が対応します",
+                    "nuance": "カジュアルな確認",
+                    "scene": "会話、チーム内"
+                },
+                {
+                    "id": "general-006",
+                    "category": "General Business",
+                    "japanese": "～しませんか",
+                    "english": "Why don't we...?",
+                    "formality": "meeting",
+                    "alternatives": ["How about...?", "What if we...?"],
+                    "example": "Why don't we schedule a follow-up meeting next week?",
+                    "exampleJa": "来週フォローアップミーティングをスケジュールしませんか",
+                    "nuance": "丁寧な提案",
+                    "scene": "会議、チームディスカッション"
+                },
+                {
+                    "id": "general-007",
+                    "category": "General Business",
+                    "japanese": "まだ何とも言えない",
+                    "english": "I'm not sure yet.",
+                    "formality": "meeting",
+                    "alternatives": ["Let me get back to you on that.", "I'll need to check with..."],
+                    "example": "I'm not sure yet. Let me think about it.",
+                    "exampleJa": "まだ何とも言えません。考えさせてください",
+                    "nuance": "率直な保留",
+                    "scene": "即答できない時"
+                },
+                {
+                    "id": "general-008",
+                    "category": "General Business",
+                    "japanese": "ぜひぜひ！",
+                    "english": "Absolutely!",
+                    "formality": "casual",
+                    "alternatives": ["Sounds great!", "I'm all for it."],
+                    "example": "Absolutely! Let's move forward with that.",
+                    "exampleJa": "ぜひぜひ！それで進めましょう",
+                    "nuance": "強い肯定",
+                    "scene": "提案への賛成"
+                },
+                {
+                    "id": "opening-001",
+                    "category": "Opening & Agenda",
+                    "japanese": "本日は～についてお話ししたいと思います",
+                    "english": "Today, I'd like to...",
+                    "formality": "meeting",
+                    "alternatives": ["The goal of today's session is..."],
+                    "example": "Today, I'd like to walk you through an overview of Sidekicks.",
+                    "exampleJa": "本日は、Sidekicksの概要をご説明したいと思います",
+                    "nuance": "丁寧、プレゼンの定番表現",
+                    "scene": "プレゼン冒頭、会議の目的説明"
+                },
+                {
+                    "id": "opening-002",
+                    "category": "Opening & Agenda",
+                    "japanese": "はじめまして",
+                    "english": "Nice to meet you.",
+                    "formality": "meeting",
+                    "alternatives": ["It's very nice to meet you.", "Pleasure to meet you."],
+                    "example": "Nice to meet you. My name is Yu Takeshita.",
+                    "exampleJa": "はじめまして。竹下と申します",
+                    "nuance": "標準的なビジネス挨拶",
+                    "scene": "初対面の挨拶、自己紹介"
+                },
+                {
+                    "id": "opening-003",
+                    "category": "Opening & Agenda",
+                    "japanese": "簡単に説明させてください",
+                    "english": "Let me briefly explain...",
+                    "formality": "meeting",
+                    "alternatives": ["Let me start with...", "I'll start by..."],
+                    "example": "First, let me briefly explain the background.",
+                    "exampleJa": "まず、背景を簡単に説明させてください",
+                    "nuance": "前置き、次のトピックへの導入",
+                    "scene": "セクションの開始、背景説明"
+                },
+                {
+                    "id": "transition-001",
+                    "category": "Presentation Transitions",
+                    "japanese": "～したいと思います",
+                    "english": "We'd like to...",
+                    "formality": "meeting",
+                    "alternatives": ["I'd like to...", "We aim to..."],
+                    "example": "We'd like to introduce the Sidekicks initiatives.",
+                    "exampleJa": "Sidekicksの取り組みをご紹介したいと思います",
+                    "nuance": "丁寧な提案、協力的な印象",
+                    "scene": "プレゼンでのアジェンダ説明"
+                },
+                {
+                    "id": "transition-002",
+                    "category": "Presentation Transitions",
+                    "japanese": "重要なポイントを強調させてください",
+                    "english": "Let me highlight...",
+                    "formality": "meeting",
+                    "alternatives": ["I'd like to highlight...", "The key point here is..."],
+                    "example": "Let me highlight the first challenge: scalability.",
+                    "exampleJa": "最初の課題、スケーラビリティを強調させてください",
+                    "nuance": "アクション志向、重要ポイントの強調",
+                    "scene": "キーメッセージを伝える時"
+                },
+                {
+                    "id": "transition-003",
+                    "category": "Presentation Transitions",
+                    "japanese": "それを踏まえて...",
+                    "english": "With that in mind...",
+                    "formality": "meeting",
+                    "alternatives": ["Based on that...", "Given that..."],
+                    "example": "With that in mind, I'd like to propose a solution.",
+                    "exampleJa": "それを踏まえて、解決策を提案したいと思います",
+                    "nuance": "論理的なつながり、前提を意識",
+                    "scene": "セクション間の移行、提案の前置き"
+                },
+                {
+                    "id": "transition-004",
+                    "category": "Presentation Transitions",
+                    "japanese": "順を追って説明します",
+                    "english": "Let me walk you through...",
+                    "formality": "meeting",
+                    "alternatives": ["I'll walk you through...", "I'll take you through..."],
+                    "example": "Let me walk you through the roadmap.",
+                    "exampleJa": "ロードマップを順を追って説明させてください",
+                    "nuance": "パーソナル、エンゲージング",
+                    "scene": "プロセス説明、手順の解説"
+                },
+                {
+                    "id": "transition-005",
+                    "category": "Presentation Transitions",
+                    "japanese": "次に移ります",
+                    "english": "Moving on to...",
+                    "formality": "meeting",
+                    "alternatives": ["Let's move on to...", "Next, ..."],
+                    "example": "Moving on to the next topic, let's discuss the timeline.",
+                    "exampleJa": "次のトピックに移りまして、スケジュールについて議論しましょう",
+                    "nuance": "スムーズな移行",
+                    "scene": "トピック切り替え"
+                },
+                {
+                    "id": "clarification-001",
+                    "category": "Clarification & Confirmation",
+                    "japanese": "ここまでで理解できましたか？",
+                    "english": "Does that make sense?",
+                    "formality": "meeting",
+                    "alternatives": ["Is that clear?", "Any questions so far?"],
+                    "example": "So that's our proposed framework. Does that make sense?",
+                    "exampleJa": "これが我々の提案するフレームワークです。ここまでで理解できましたか？",
+                    "nuance": "カジュアル寄り、対話的",
+                    "scene": "複雑な説明の後、セクションの区切り"
+                },
+                {
+                    "id": "clarification-002",
+                    "category": "Clarification & Confirmation",
+                    "japanese": "念のため確認ですが...",
+                    "english": "Just to make sure...",
+                    "formality": "meeting",
+                    "alternatives": ["To clarify...", "Let me make sure I understand..."],
+                    "example": "Just to make sure I understand, are you suggesting that we should clarify the boundary?",
+                    "exampleJa": "念のため確認ですが、境界を明確にすべきだとおっしゃっているのでしょうか",
+                    "nuance": "丁寧な確認",
+                    "scene": "相手の発言を確認する時"
+                },
+                {
+                    "id": "clarification-003",
+                    "category": "Clarification & Confirmation",
+                    "japanese": "ここまでで質問はありますか？",
+                    "english": "Any questions so far?",
+                    "formality": "meeting",
+                    "alternatives": ["Any questions before we move on?", "Questions?"],
+                    "example": "That's the overview of the project. Any questions so far?",
+                    "exampleJa": "プロジェクトの概要は以上です。ここまでで質問はありますか？",
+                    "nuance": "カジュアル、オープン",
+                    "scene": "セクションの区切り"
+                },
+                {
+                    "id": "domain-001",
+                    "category": "Domain-Specific (PdM/AI)",
+                    "japanese": "データドリブンな意思決定",
+                    "english": "data-driven decision-making",
+                    "formality": "meeting",
+                    "alternatives": ["data-driven business", "data-driven operations"],
+                    "example": "The concept is to accelerate business through data-driven decision-making.",
+                    "exampleJa": "コンセプトは、データドリブンな意思決定を通じてビジネスを加速することです",
+                    "nuance": "PdM/マーケティングの定番表現",
+                    "scene": "プロダクトビジョン説明、価値提案"
+                },
+                {
+                    "id": "domain-002",
+                    "category": "Domain-Specific (PdM/AI)",
+                    "japanese": "実用的なインサイト",
+                    "english": "actionable insights",
+                    "formality": "meeting",
+                    "alternatives": ["data-driven insights", "business-ready insights"],
+                    "example": "Products that generate actionable insights for business operations.",
+                    "exampleJa": "ビジネス運営のための実用的なインサイトを生成するプロダクト",
+                    "nuance": "実用性・実行可能性を強調",
+                    "scene": "プロダクト価値の説明"
+                },
+                {
+                    "id": "domain-003",
+                    "category": "Domain-Specific (PdM/AI)",
+                    "japanese": "スケーラブル",
+                    "english": "scalable",
+                    "formality": "meeting",
+                    "alternatives": ["scalability", "scalable operations"],
+                    "example": "The customization made it difficult to scale efficiently.",
+                    "exampleJa": "カスタマイズにより、効率的にスケールすることが困難でした",
+                    "nuance": "拡張可能性",
+                    "scene": "プロダクト設計、技術的な課題"
+                },
+                {
+                    "id": "general-009",
+                    "category": "General Business",
+                    "japanese": "それは良い質問ですね",
+                    "english": "That's a great question.",
+                    "formality": "meeting",
+                    "alternatives": ["That's a good point.", "Great question.", "I'm glad you asked."],
+                    "example": "That's a great question. I think the challenge is going back to the fact that we're very early.",
+                    "exampleJa": "それは良い質問ですね。課題は、私たちがまだ非常に初期段階だという事実に立ち戻ります",
+                    "nuance": "質問を評価しながら考える時間を作る、相手へのリスペクト",
+                    "scene": "プレゼン、会議での Q&A"
+                },
+                {
+                    "id": "general-010",
+                    "category": "General Business",
+                    "japanese": "結局のところ",
+                    "english": "at the end of the day",
+                    "formality": "meeting",
+                    "alternatives": ["Ultimately", "In the end", "When it comes down to it"],
+                    "example": "At the end of the day, the way I think about DX is that we're really more a startup.",
+                    "exampleJa": "結局のところ、私がDXについて考える方法は、私たちは本当にスタートアップであるということです",
+                    "nuance": "細かいことを超えて本質を述べる、議論の結論",
+                    "scene": "議論の締めくくり、本質的なポイントを強調"
+                },
+                {
+                    "id": "general-011",
+                    "category": "General Business",
+                    "japanese": "考えてみれば",
+                    "english": "If you think about it",
+                    "formality": "meeting",
+                    "alternatives": ["When you think about it", "Think about it", "Consider this"],
+                    "example": "If you think about it, the data is the core of everything that we're doing at MRP.",
+                    "exampleJa": "考えてみれば、データは私たちがMRPで行っている全ての核心です",
+                    "nuance": "聴衆に思考を促し、納得を引き出す",
+                    "scene": "プレゼン、説得、ロジックの展開"
+                },
+                {
+                    "id": "general-012",
+                    "category": "General Business",
+                    "japanese": "解決策を見つける必要がある",
+                    "english": "We need to figure out",
+                    "formality": "meeting",
+                    "alternatives": ["We need to work out", "We have to determine", "We need to identify"],
+                    "example": "We need to figure out what type of product we can offer that makes sense.",
+                    "exampleJa": "私たちは、意味のある形で提供できるプロダクトのタイプが何かを見つける必要があります",
+                    "nuance": "まだ答えが見えていない課題を率直に認める",
+                    "scene": "課題の共有、協働の呼びかけ"
+                },
+                {
+                    "id": "general-013",
+                    "category": "General Business",
+                    "japanese": "〜という事実に立ち戻ると",
+                    "english": "going back to the fact that",
+                    "formality": "meeting",
+                    "alternatives": ["Coming back to the point that", "Returning to the fact that", "As I mentioned earlier"],
+                    "example": "The challenge is going back to the fact that we're very early and we're very much a startup.",
+                    "exampleJa": "課題は、私たちがまだ非常に初期段階でスタートアップそのものだという事実に立ち戻ります",
+                    "nuance": "議論の前提や基本的な状況を再確認し、そこから考える",
+                    "scene": "議論が発散した時、前提を再確認する時"
+                }
+            ]
+        };
+
+        // Load data
+        function loadPhrases() {
+            phrases = PHRASES_DATA.phrases;
+            initializeData();
+            updateCategoryFilters();
+            applyFilters();
+            updateStats();
+            loadNextPhrase();
+        }
+
+        // Initialize phrase data from localStorage
+        function initializeData() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                const data = JSON.parse(stored);
+                phrases.forEach(phrase => {
+                    const savedData = data[phrase.id];
+                    if (savedData) {
+                        phrase.correct = savedData.correct || 0;
+                        phrase.wrong = savedData.wrong || 0;
+                        phrase.lastStudied = savedData.lastStudied;
+                        phrase.mastered = savedData.mastered || false;
+                    } else {
+                        phrase.correct = 0;
+                        phrase.wrong = 0;
+                        phrase.mastered = false;
+                    }
+                });
+            } else {
+                phrases.forEach(phrase => {
+                    phrase.correct = 0;
+                    phrase.wrong = 0;
+                    phrase.mastered = false;
+                });
+            }
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            const data = {};
+            phrases.forEach(phrase => {
+                data[phrase.id] = {
+                    correct: phrase.correct,
+                    wrong: phrase.wrong,
+                    lastStudied: phrase.lastStudied,
+                    mastered: phrase.mastered
+                };
+            });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        // Update stats
+        function updateStats() {
+            const stats = getStats();
+            document.getElementById('todayCount').textContent = stats.today;
+            document.getElementById('totalCount').textContent = stats.total;
+            document.getElementById('masteredCount').textContent = stats.mastered;
+        }
+
+        // Get statistics
+        function getStats() {
+            const today = new Date().toDateString();
+            const stored = localStorage.getItem(STATS_KEY);
+            let stats = stored ? JSON.parse(stored) : { today: 0, total: 0, lastDate: today };
+
+            if (stats.lastDate !== today) {
+                stats.today = 0;
+                stats.lastDate = today;
+            }
+
+            stats.mastered = phrases.filter(p => p.mastered).length;
+
+            return stats;
+        }
+
+        // Save stats
+        function saveStats(increment = false) {
+            const stats = getStats();
+            if (increment) {
+                stats.today++;
+                stats.total++;
+            }
+            localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+            updateStats();
+        }
+
+        // Update category filters
+        function updateCategoryFilters() {
+            const categories = [...new Set(phrases.map(p => p.category))];
+            const container = document.getElementById('categoryFilters');
+            container.innerHTML = '<div class="filter-chip active" data-filter="category" data-value="all">すべて</div>';
+            categories.forEach(cat => {
+                const chip = document.createElement('div');
+                chip.className = 'filter-chip';
+                chip.dataset.filter = 'category';
+                chip.dataset.value = cat;
+                chip.textContent = cat;
+                container.appendChild(chip);
+            });
+        }
+
+        // Shuffle array
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Apply filters
+        function applyFilters() {
+            filteredPhrases = phrases.filter(phrase => {
+                if (filters.category !== 'all' && phrase.category !== filters.category) return false;
+                if (filters.formality !== 'all' && phrase.formality !== filters.formality) return false;
+                if (filters.level === 'learning' && phrase.mastered) return false;
+                if (filters.level === 'mastered' && !phrase.mastered) return false;
+                return true;
+            });
+
+            // Shuffle the filtered phrases
+            filteredPhrases = shuffleArray(filteredPhrases);
+
+            currentIndex = 0;
+
+            if (filteredPhrases.length === 0) {
+                document.getElementById('quizCard').classList.add('hidden');
+                document.getElementById('emptyState').classList.remove('hidden');
+                document.getElementById('progress').textContent = '';
+            } else {
+                document.getElementById('quizCard').classList.remove('hidden');
+                document.getElementById('emptyState').classList.add('hidden');
+            }
+        }
+
+        // Load next phrase
+        function loadNextPhrase() {
+            if (filteredPhrases.length === 0) return;
+
+            currentPhrase = filteredPhrases[currentIndex];
+            updateProgress();
+            showQuestion();
+        }
+
+        // Update progress
+        function updateProgress() {
+            const progress = `${currentIndex + 1} / ${filteredPhrases.length}`;
+            document.getElementById('progress').textContent = progress;
+        }
+
+        // Show question
+        function showQuestion() {
+            // Stop any ongoing speech
+            if (isSpeaking) {
+                window.speechSynthesis.cancel();
+                isSpeaking = false;
+                document.getElementById('speakBtn').classList.remove('speaking');
+            }
+
+            const questionText = currentMode === 'ja-en' ? currentPhrase.japanese : currentPhrase.english;
+            document.getElementById('questionText').textContent = questionText;
+            document.getElementById('cardCategory').textContent = currentPhrase.category;
+
+            const formalityMap = {
+                'email': { text: '📧 Email/Formal', class: 'formality-email' },
+                'meeting': { text: '💼 Meeting', class: 'formality-meeting' },
+                'casual': { text: '👥 Team/Casual', class: 'formality-casual' }
+            };
+
+            const formality = formalityMap[currentPhrase.formality];
+            if (formality) {
+                document.getElementById('formalityBadge').innerHTML =
+                    `<span class="formality-badge ${formality.class}">${formality.text}</span>`;
+            }
+
+            document.getElementById('questionSection').classList.remove('hidden');
+            document.getElementById('answerSection').classList.add('hidden');
+            document.getElementById('showAnswerBtn').classList.remove('hidden');
+            document.getElementById('correctBtn').classList.add('hidden');
+            document.getElementById('wrongBtn').classList.add('hidden');
+            document.getElementById('masterBtn').classList.add('hidden');
+        }
+
+        // Show answer
+        function showAnswer() {
+            const answerText = currentMode === 'ja-en' ? currentPhrase.english : currentPhrase.japanese;
+            document.getElementById('answerMain').textContent = answerText;
+
+            if (currentPhrase.alternatives && currentPhrase.alternatives.length > 0) {
+                document.getElementById('answerAlternatives').textContent =
+                    '他の言い方: ' + currentPhrase.alternatives.join(', ');
+            } else {
+                document.getElementById('answerAlternatives').textContent = '';
+            }
+
+            document.getElementById('exampleEn').textContent = currentPhrase.example;
+            document.getElementById('exampleJa').textContent = currentPhrase.exampleJa;
+
+            const metaText = `
+                💡 ${currentPhrase.nuance}<br>
+                📍 ${currentPhrase.scene}
+            `;
+            document.getElementById('answerMeta').innerHTML = metaText;
+
+            document.getElementById('questionSection').classList.add('hidden');
+            document.getElementById('answerSection').classList.remove('hidden');
+            document.getElementById('showAnswerBtn').classList.add('hidden');
+            document.getElementById('correctBtn').classList.remove('hidden');
+            document.getElementById('wrongBtn').classList.remove('hidden');
+            document.getElementById('masterBtn').classList.remove('hidden');
+        }
+
+        // Mark as correct
+        function markCorrect() {
+            currentPhrase.correct++;
+            currentPhrase.lastStudied = new Date().toISOString();
+            saveData();
+            saveStats(true);
+            nextPhrase();
+        }
+
+        // Mark as wrong
+        function markWrong() {
+            currentPhrase.wrong++;
+            currentPhrase.lastStudied = new Date().toISOString();
+            saveData();
+            saveStats(true);
+            nextPhrase();
+        }
+
+        // Toggle master
+        function toggleMaster() {
+            currentPhrase.mastered = !currentPhrase.mastered;
+            saveData();
+            updateStats();
+            const btn = document.getElementById('masterBtn');
+            btn.textContent = currentPhrase.mastered ? '再学習' : 'マスター';
+        }
+
+        // Next phrase
+        function nextPhrase() {
+            // Stop any ongoing speech
+            if (isSpeaking) {
+                window.speechSynthesis.cancel();
+                isSpeaking = false;
+                document.getElementById('speakBtn').classList.remove('speaking');
+            }
+            currentIndex = (currentIndex + 1) % filteredPhrases.length;
+            loadNextPhrase();
+        }
+
+        // Speak example sentence
+        function speakExample() {
+            if (!currentPhrase || !currentPhrase.example) return;
+
+            const speakBtn = document.getElementById('speakBtn');
+
+            // If already speaking, stop
+            if (isSpeaking) {
+                window.speechSynthesis.cancel();
+                isSpeaking = false;
+                speakBtn.classList.remove('speaking');
+                return;
+            }
+
+            // Create speech synthesis utterance
+            const utterance = new SpeechSynthesisUtterance(currentPhrase.example);
+
+            // Set language to English
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9; // Slightly slower for clarity
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+
+            // Event handlers
+            utterance.onstart = () => {
+                isSpeaking = true;
+                speakBtn.classList.add('speaking');
+            };
+
+            utterance.onend = () => {
+                isSpeaking = false;
+                speakBtn.classList.remove('speaking');
+            };
+
+            utterance.onerror = (event) => {
+                console.error('Speech synthesis error:', event);
+                isSpeaking = false;
+                speakBtn.classList.remove('speaking');
+            };
+
+            // Speak
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Event listeners
+        document.getElementById('showAnswerBtn').addEventListener('click', showAnswer);
+        document.getElementById('correctBtn').addEventListener('click', markCorrect);
+        document.getElementById('wrongBtn').addEventListener('click', markWrong);
+        document.getElementById('masterBtn').addEventListener('click', toggleMaster);
+        document.getElementById('speakBtn').addEventListener('click', speakExample);
+
+        // Controls toggle
+        document.getElementById('controlsHeader').addEventListener('click', () => {
+            const content = document.getElementById('controlsContent');
+            const toggle = document.getElementById('controlsToggle');
+            content.classList.toggle('collapsed');
+            toggle.classList.toggle('collapsed');
+        });
+
+        // Mode switch
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentMode = btn.dataset.mode;
+                loadNextPhrase();
+            });
+        });
+
+        // Filter chips
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('filter-chip')) {
+                const filterType = e.target.dataset.filter;
+                const filterValue = e.target.dataset.value;
+
+                // Remove active from siblings
+                e.target.parentElement.querySelectorAll('.filter-chip').forEach(chip => {
+                    chip.classList.remove('active');
+                });
+                e.target.classList.add('active');
+
+                filters[filterType] = filterValue;
+                applyFilters();
+                loadNextPhrase();
+            }
+        });
+
+        // PWA install prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').classList.add('show');
+        });
+
+        document.getElementById('installButton').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                document.getElementById('installPrompt').classList.remove('show');
+            }
+        });
+
+        // Initialize
+        loadPhrases();
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('Service Worker registered:', registration);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
