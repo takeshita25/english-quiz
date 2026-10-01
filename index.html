@@ -1,0 +1,2570 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#2563eb">
+    <title>English Expression Quiz</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-around;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .controls {
+            background: white;
+            border-radius: 15px;
+            padding: 0;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .controls-header {
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            background: #f9fafb;
+        }
+
+        .controls-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin: 0;
+        }
+
+        .controls-toggle {
+            font-size: 18px;
+            transition: transform 0.3s;
+        }
+
+        .controls-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .controls-content {
+            padding: 20px;
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .controls-content.collapsed {
+            max-height: 0;
+            padding: 0 20px;
+        }
+
+        .mode-switch {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .mode-btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .filters {
+            display: grid;
+            gap: 10px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-chip {
+            padding: 6px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .filter-chip.active {
+            background: #dbeafe;
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            min-height: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .card-category {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 11px;
+            color: #6b7280;
+            background: #f3f4f6;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .question {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .formality-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+
+        .formality-email {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .formality-meeting {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .formality-casual {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .answer {
+            margin-top: 30px;
+        }
+
+        .answer-main {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 15px;
+        }
+
+        .answer-alternatives {
+            font-size: 16px;
+            color: #6b7280;
+            margin-bottom: 15px;
+        }
+
+        .answer-example {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .answer-example-en-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .answer-example-en {
+            font-style: italic;
+            color: #374151;
+            flex: 1;
+        }
+
+        .speak-btn {
+            background: #3b82f6;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .speak-btn:hover {
+            background: #2563eb;
+            transform: scale(1.05);
+        }
+
+        .speak-btn:active {
+            transform: scale(0.95);
+        }
+
+        .speak-btn.speaking {
+            background: #ef4444;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .answer-example-ja {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .answer-meta {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress {
+            font-size: 14px;
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .card {
+                padding: 30px 20px;
+                min-height: 350px;
+            }
+
+            .question {
+                font-size: 24px;
+            }
+
+            .answer-main {
+                font-size: 26px;
+            }
+        }
+
+        .install-prompt {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+
+        .install-prompt.show {
+            display: block;
+        }
+
+        .install-prompt h3 {
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+
+        .install-prompt p {
+            color: #6b7280;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .btn-install {
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 English Expression Quiz</h1>
+        </div>
+
+        <div class="install-prompt" id="installPrompt">
+            <h3>📱 アプリとして追加</h3>
+            <p>ホーム画面に追加すると、アプリのように使えます</p>
+            <button class="btn-install" id="installButton">ホーム画面に追加</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="todayCount">0</div>
+                <div class="stat-label">今日の学習</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalCount">0</div>
+                <div class="stat-label">累計</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="masteredCount">0</div>
+                <div class="stat-label">習得済み</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="controls-header" id="controlsHeader">
+                <h3>⚙️ 設定とフィルター</h3>
+                <span class="controls-toggle" id="controlsToggle">▼</span>
+            </div>
+            <div class="controls-content" id="controlsContent">
+                <div class="mode-switch">
+                    <button class="mode-btn active" data-mode="ja-en">日本語 → 英語</button>
+                    <button class="mode-btn" data-mode="en-ja">英語 → 日本語</button>
+                </div>
+
+                <div class="filters">
+                    <div class="filter-group">
+                        <div class="filter-label">カテゴリ</div>
+                        <div class="filter-options" id="categoryFilters"></div>
+                    </div>
+                    <div class="filter-group">
+                        <div class="filter-label">フォーマル度</div>
+                        <div class="filter-options">
+                            <div class="filter-chip active" data-filter="formality" data-value="all">すべて</div>
+                            <div class="filter-chip" data-filter="formality" data-value="email">📧 Email</div>
+                            <div class="filter-chip" data-filter="formality" data-value="meeting">💼 Meeting</div>
+                            <div class="filter-chip" data-filter="formality" data-value="casual">👥 Casual</div>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <div class="filter-label">習得レベル</div>
+                        <div class="filter-options">
+                            <div class="filter-chip active" data-filter="level" data-value="all">すべて</div>
+                            <div class="filter-chip" data-filter="level" data-value="learning">学習中</div>
+                            <div class="filter-chip" data-filter="level" data-value="mastered">習得済み</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress" id="progress"></div>
+
+        <div class="card" id="quizCard">
+            <div class="card-category" id="cardCategory"></div>
+            <div class="card-content">
+                <div id="questionSection">
+                    <div class="question" id="questionText"></div>
+                    <div id="formalityBadge"></div>
+                </div>
+
+                <div id="answerSection" class="hidden">
+                    <div class="answer">
+                        <div class="answer-main" id="answerMain"></div>
+                        <div class="answer-alternatives" id="answerAlternatives"></div>
+                        <div class="answer-example">
+                            <div class="answer-example-en-wrapper">
+                                <div class="answer-example-en" id="exampleEn"></div>
+                                <button class="speak-btn" id="speakBtn" title="例文を音声で聞く">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="answer-example-ja" id="exampleJa"></div>
+                        </div>
+                        <div class="answer-meta" id="answerMeta"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" id="showAnswerBtn">答えを見る</button>
+                <button class="btn btn-success hidden" id="correctBtn">✓ 正解</button>
+                <button class="btn btn-danger hidden" id="wrongBtn">× 誤答</button>
+                <button class="btn btn-secondary hidden" id="masterBtn">マスター</button>
+            </div>
+        </div>
+
+        <div class="empty-state hidden" id="emptyState">
+            <div class="empty-state-icon">📚</div>
+            <h2>フレーズがありません</h2>
+            <p>フィルタ条件を変更してみてください</p>
+        </div>
+    </div>
+
+    <script>
+        let phrases = [];
+        let currentPhrase = null;
+        let currentMode = 'ja-en';
+        let filters = {
+            category: 'all',
+            formality: 'all',
+            level: 'all'
+        };
+        let filteredPhrases = [];
+        let currentIndex = 0;
+        let deferredPrompt;
+        let isSpeaking = false;
+
+        // LocalStorage keys
+        const STORAGE_KEY = 'englishQuizData';
+        const STATS_KEY = 'englishQuizStats';
+
+        // Phrases data (embedded)
+        const PHRASES_DATA = {
+    "phrases": [
+    {
+        "id": "general-business-～していた",
+        "category": "General Business",
+        "japanese": "～していただけますでしょうか",
+        "english": "I would appreciate it if you could...",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "I would appreciate it if you could review the document by Friday.",
+        "exampleJa": "金曜日までに資料をご確認いただけますと幸いです",
+        "nuance": "最も丁寧、感謝を込めた依頼",
+        "scene": "重要な依頼、上司、社外"
+    },
+    {
+        "id": "general-business-～していた",
+        "category": "General Business",
+        "japanese": "～していただけますと幸いです",
+        "english": "I would appreciate it if you could...",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "I would appreciate it if you could provide your feedback by end of this week.",
+        "exampleJa": "今週末までにフィードバックをいただけますと幸いです",
+        "nuance": "\"I would appreciate\" よりややカジュアル",
+        "scene": "社内メール、チームへの依頼"
+    },
+    {
+        "id": "general-business-ついでに～",
+        "category": "General Business",
+        "japanese": "ついでに～",
+        "english": "While you're at it, could you also...?",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "While you're at it, could you also check the other files?",
+        "exampleJa": "ついでに他のファイルも確認してもらえますか",
+        "nuance": "カジュアル、軽い追加依頼",
+        "scene": "既に依頼している作業に追加"
+    },
+    {
+        "id": "general-business-念のため～",
+        "category": "General Business",
+        "japanese": "念のため～",
+        "english": "Just to be safe, ...",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "Just to be safe, could you double-check the numbers?",
+        "exampleJa": "念のため、数字を再確認していただけますか",
+        "nuance": "記録に残すため",
+        "scene": "重要な確認事項"
+    },
+    {
+        "id": "general-business-おっしゃる",
+        "category": "General Business",
+        "japanese": "おっしゃる通りです",
+        "english": "You're absolutely right.",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "You're absolutely right. We should prioritize that.",
+        "exampleJa": "おっしゃる通りです。それを優先すべきですね",
+        "nuance": "強い同意",
+        "scene": "会議、ディスカッション"
+    },
+    {
+        "id": "general-business-確かに",
+        "category": "General Business",
+        "japanese": "確かに",
+        "english": "That's a good point.",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "That's a good point. We should consider that.",
+        "exampleJa": "確かに良い指摘ですね。それも考慮すべきですね",
+        "nuance": "相手の意見を評価しながら同意",
+        "scene": "会議、ディスカッション"
+    },
+    {
+        "id": "general-business-了解です",
+        "category": "General Business",
+        "japanese": "了解です",
+        "english": "Understood.\" / \"Noted.",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "Understood. I'll update the document accordingly.",
+        "exampleJa": "承知しました。それに応じて資料を更新します",
+        "nuance": "フォーマル、指示を受けた確認",
+        "scene": "メール、上司からの指示"
+    },
+    {
+        "id": "general-business-～しません",
+        "category": "General Business",
+        "japanese": "～しませんか",
+        "english": "Why don't we...?",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "Why don't we schedule a follow-up meeting next week?",
+        "exampleJa": "来週フォローアップミーティングをスケジュールしませんか",
+        "nuance": "丁寧な提案",
+        "scene": "会議、チームディスカッション"
+    },
+    {
+        "id": "general-business-～したらど",
+        "category": "General Business",
+        "japanese": "～したらどうでしょう",
+        "english": "You might want to...",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "You might want to check with the legal team first.",
+        "exampleJa": "まず法務チームに確認した方がいいかもしれません",
+        "nuance": "控えめなアドバイス",
+        "scene": "提案、アドバイス"
+    },
+    {
+        "id": "general-business-まだ何とも",
+        "category": "General Business",
+        "japanese": "まだ何とも言えない",
+        "english": "I'm not sure yet.",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "I'm not sure yet. Let me think about it.",
+        "exampleJa": "まだ何とも言えません。考えさせてください",
+        "nuance": "率直な保留",
+        "scene": "即答できない時"
+    },
+    {
+        "id": "general-business-考えてみま",
+        "category": "General Business",
+        "japanese": "考えてみます",
+        "english": "I'll think about it.",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "I'll think about it and let you know.",
+        "exampleJa": "考えてみて、お知らせします",
+        "nuance": "シンプルな保留",
+        "scene": "カジュアルな場面"
+    },
+    {
+        "id": "general-business-ぜひぜひ！",
+        "category": "General Business",
+        "japanese": "ぜひぜひ！",
+        "english": "Absolutely!",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "Absolutely! Let's move forward with that.",
+        "exampleJa": "ぜひぜひ！それで進めましょう",
+        "nuance": "強い肯定",
+        "scene": "提案への賛成"
+    },
+    {
+        "id": "general-business-なるほど",
+        "category": "General Business",
+        "japanese": "なるほど",
+        "english": "I see.",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "I see. That explains the issue.",
+        "exampleJa": "なるほど。それで問題が説明できますね",
+        "nuance": "理解を示す",
+        "scene": "説明を聞いた後"
+    },
+    {
+        "id": "general-business-～していく",
+        "category": "General Business",
+        "japanese": "～していく想定です",
+        "english": "We plan to...",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "We plan to launch the feature in Q2.",
+        "exampleJa": "Q2に機能をローンチしていく予定です",
+        "nuance": "計画を説明",
+        "scene": "プロジェクト説明"
+    },
+    {
+        "id": "general-business-～するつも",
+        "category": "General Business",
+        "japanese": "～するつもりです",
+        "english": "I'm going to...",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "I'm going to follow up with them tomorrow.",
+        "exampleJa": "明日フォローアップするつもりです",
+        "nuance": "決定した行動",
+        "scene": "確定した予定"
+    },
+    {
+        "id": "general-business-～なんじゃ",
+        "category": "General Business",
+        "japanese": "～なんじゃない？",
+        "english": "I think...",
+        "formality": "casual",
+        "alternatives": [],
+        "example": "I think that's the right approach.",
+        "exampleJa": "それが正しいアプローチなんじゃない？",
+        "nuance": "",
+        "scene": ""
+    },
+    {
+        "id": "general-business-～なんだよ",
+        "category": "General Business",
+        "japanese": "～なんだよね",
+        "english": "The thing is, ...",
+        "formality": "casual",
+        "alternatives": [],
+        "example": "The thing is, we don't have enough budget.",
+        "exampleJa": "予算が足りないんだよね",
+        "nuance": "問題・状況を説明",
+        "scene": "カジュアルな説明"
+    },
+    {
+        "id": "general-business-それは良い",
+        "category": "General Business",
+        "japanese": "それは良い質問ですね",
+        "english": "That's a great question.",
+        "formality": "meeting",
+        "alternatives": [
+            "That's a good point.",
+            "Great question.",
+            "I'm glad you asked."
+        ],
+        "example": "That's a great question. I think the challenge is going back to the fact that we're very early and we're very much a startup.",
+        "exampleJa": "それは良い質問ですね。課題は、私たちがまだ非常に初期段階でスタートアップそのものだという事実に立ち戻ります",
+        "nuance": "質問を評価しながら考える時間を作る、相手へのリスペクト",
+        "scene": "プレゼン、会議での Q&A"
+    },
+    {
+        "id": "general-business-結局のとこ",
+        "category": "General Business",
+        "japanese": "結局のところ",
+        "english": "at the end of the day",
+        "formality": "meeting",
+        "alternatives": [
+            "Ultimately",
+            "In the end",
+            "When it comes down to it"
+        ],
+        "example": "At the end of the day, the way I think about DX is that we're really more a startup, we just happen to be inside of Sony.",
+        "exampleJa": "結局のところ、私がDXについて考える方法は、私たちは本当にスタートアップであり、たまたまソニーの中にいるだけです",
+        "nuance": "細かいことを超えて本質を述べる、議論の結論",
+        "scene": "議論の締めくくり、本質的なポイントを強調"
+    },
+    {
+        "id": "general-business-考えてみれ",
+        "category": "General Business",
+        "japanese": "考えてみれば",
+        "english": "If you think about it, ...",
+        "formality": "meeting",
+        "alternatives": [
+            "When you think about it",
+            "Think about it",
+            "Consider this"
+        ],
+        "example": "If you think about it, the data and all of the things that you are working on is the core of everything that we're doing at MRP.",
+        "exampleJa": "考えてみれば、データとあなた方が取り組んでいることの全ては、私たちがMRPで行っている全ての核心です",
+        "nuance": "聴衆に思考を促し、納得を引き出す",
+        "scene": "プレゼン、説得、ロジックの展開"
+    },
+    {
+        "id": "general-business-解決策を見",
+        "category": "General Business",
+        "japanese": "解決策を見つける必要がある",
+        "english": "We need to figure out ...",
+        "formality": "meeting",
+        "alternatives": [
+            "We need to work out",
+            "We have to determine",
+            "We need to identify"
+        ],
+        "example": "We need to figure out what is the type of product and service that we can offer that makes sense.",
+        "exampleJa": "私たちは、意味のある形で提供できるプロダクトとサービスのタイプが何かを見つける必要があります",
+        "nuance": "まだ答えが見えていない課題を率直に認める、チーム全体で取り組む姿勢",
+        "scene": "課題の共有、協働の呼びかけ"
+    },
+    {
+        "id": "general-business-〜という事",
+        "category": "General Business",
+        "japanese": "〜という事実に立ち戻ると",
+        "english": "going back to the fact that ...",
+        "formality": "meeting",
+        "alternatives": [
+            "Coming back to the point that",
+            "Returning to the fact that",
+            "As I mentioned earlier"
+        ],
+        "example": "I think the challenge is going back to the fact that we're very early and we're very much a startup.",
+        "exampleJa": "課題は、私たちがまだ非常に初期段階でスタートアップそのものだという事実に立ち戻ります",
+        "nuance": "議論の前提や基本的な状況を再確認し、そこから考える",
+        "scene": "議論が発散した時、前提を再確認する時"
+    },
+    {
+        "id": "general-business-しばらくぶ",
+        "category": "General Business",
+        "japanese": "しばらくぶりですね",
+        "english": "It's been a while.",
+        "formality": "meeting",
+        "alternatives": [
+            "Long time no see",
+            "It's been a long time",
+            "Good to see you again"
+        ],
+        "example": "I think it's been a while, so I hope everyone is doing well.",
+        "exampleJa": "しばらくぶりですね、皆さんお元気だと良いのですが",
+        "nuance": "久しぶりに会う時の挨拶",
+        "scene": "定期会議の冒頭、しばらく間隔が空いた時"
+    },
+    {
+        "id": "general-business-皆さんお元",
+        "category": "General Business",
+        "japanese": "皆さんお元気だと良いのですが",
+        "english": "I hope everyone is doing well.",
+        "formality": "meeting",
+        "alternatives": [
+            "I hope this email finds you well",
+            "I trust everyone is well",
+            "Hope you're all doing great"
+        ],
+        "example": "I hope everyone is doing well. For today, I wanted to try something a bit new.",
+        "exampleJa": "皆さんお元気だと良いのですが。本日は、少し新しいことを試してみたいと思います",
+        "nuance": "会議やメール冒頭の定型的な挨拶",
+        "scene": "会議の冒頭、メールの書き出し"
+    },
+    {
+        "id": "general-business-感謝します",
+        "category": "General Business",
+        "japanese": "感謝します",
+        "english": "I appreciate it.",
+        "formality": "meeting",
+        "alternatives": [
+            "I appreciate that",
+            "Much appreciated",
+            "Thanks for that"
+        ],
+        "example": "Someone pushed a button for recording. Thank you, I appreciate it.",
+        "exampleJa": "誰かが録画ボタンを押してくれました。ありがとうございます、感謝します",
+        "nuance": "シンプルで誠実な感謝",
+        "scene": "誰かが助けてくれた時、協力してくれた時"
+    },
+    {
+        "id": "general-business-心配しない",
+        "category": "General Business",
+        "japanese": "心配しないで",
+        "english": "Don't worry.",
+        "formality": "meeting",
+        "alternatives": [
+            "No worries",
+            "It's fine",
+            "No problem"
+        ],
+        "example": "If you're not comfortable in English, you can speak in Japanese as well, don't worry.",
+        "exampleJa": "英語が苦手な方は、日本語で話しても大丈夫ですよ、心配しないで",
+        "nuance": "相手を安心させる",
+        "scene": "参加者を安心させる、心理的安全性を作る"
+    },
+    {
+        "id": "general-business-正直に言う",
+        "category": "General Business",
+        "japanese": "正直に言うと",
+        "english": "I'll be honest.",
+        "formality": "meeting",
+        "alternatives": [
+            "To be honest",
+            "Honestly",
+            "Frankly"
+        ],
+        "example": "I chose something else, I'll be honest.",
+        "exampleJa": "私は別のものを選びました、正直に言うと",
+        "nuance": "率直さ・透明性を示す",
+        "scene": "本音を言う前、異なる意見を述べる前"
+    },
+    {
+        "id": "general-business-Xが述べた",
+        "category": "General Business",
+        "japanese": "Xが述べた線に沿っています",
+        "english": "Pretty much along the lines what X mentioned.",
+        "formality": "meeting",
+        "alternatives": [
+            "Along the same lines as X",
+            "Similar to what X said",
+            "In line with X's point"
+        ],
+        "example": "I personally chose outcomes as well, yes. Pretty much along the lines what Shogo mentioned.",
+        "exampleJa": "私も個人的に成果を選びました。Shogoが述べた線にほぼ沿っています",
+        "nuance": "他者の意見に同意、同様の考えを持つ",
+        "scene": "他者の発言に同意する時"
+    },
+    {
+        "id": "general-business-的を射てい",
+        "category": "General Business",
+        "japanese": "的を射ていますね",
+        "english": "You kind of nailed it.",
+        "formality": "meeting",
+        "alternatives": [
+            "You nailed it",
+            "You hit the nail on the head",
+            "That's spot on"
+        ],
+        "example": "Yeah, I think you kind of nailed it. I voted for this one as well.",
+        "exampleJa": "そうですね、的を射ていると思います。私もこれに投票しました",
+        "nuance": "カジュアル、的確な指摘への称賛",
+        "scene": "優れた発言への評価"
+    },
+    {
+        "id": "opening-&-agenda-本日は〜に",
+        "category": "Opening & Agenda",
+        "japanese": "本日は〜についてお話ししたいと思います",
+        "english": "Today, I'd like to...",
+        "formality": "meeting",
+        "alternatives": [
+            "I'd like to share...",
+            "I'll walk you through...",
+            "Let me introduce..."
+        ],
+        "example": "Today, I'd like to walk you through an overview of Sidekicks,",
+        "exampleJa": "",
+        "nuance": "丁寧、プレゼンの定番表現",
+        "scene": "プレゼン冒頭、会議の目的説明"
+    },
+    {
+        "id": "opening-&-agenda-背景を少し",
+        "category": "Opening & Agenda",
+        "japanese": "背景を少し説明させてください",
+        "english": "Let me touch upon the background...",
+        "formality": "meeting",
+        "alternatives": [
+            "Let me briefly explain the background",
+            "Before we start, let me provide some context",
+            "A quick background on this meeting"
+        ],
+        "example": "Let me touch upon the background of this meeting a little bit,",
+        "exampleJa": "",
+        "nuance": "\"touch upon\" = 簡潔に触れる（詳細には入らない）",
+        "scene": "会議冒頭、前提・文脈の共有"
+    },
+    {
+        "id": "opening-&-agenda-何が含まれ",
+        "category": "Opening & Agenda",
+        "japanese": "何が含まれ、何が含まれないか明確にしたい",
+        "english": "I wanted to be very clear on what is covered and what is not covered",
+        "formality": "meeting",
+        "alternatives": [
+            "Let me clarify what's in scope and what's out of scope",
+            "I want to set clear boundaries on...",
+            "This session will cover X, but not Y"
+        ],
+        "example": "I wanted to be very clear on what is covered in this meeting",
+        "exampleJa": "",
+        "nuance": "スコープの境界を明示、期待値コントロール",
+        "scene": "会議冒頭、プロジェクトキックオフ"
+    },
+    {
+        "id": "opening-&-agenda-このスライ",
+        "category": "Opening & Agenda",
+        "japanese": "このスライドを説明させてください",
+        "english": "Allow me to walk through this slide",
+        "formality": "meeting",
+        "alternatives": [
+            "Let me take you through this slide",
+            "I'll walk you through this",
+            "Let me explain what you see here"
+        ],
+        "example": "Allow me to walk through this slide and I will pause at the end for questions.",
+        "exampleJa": "このスライドを説明させてください。最後に質問の時間を設けます",
+        "nuance": "\"Allow me\" = 丁寧な許可求め、\"walk through\" = 順を追って説明",
+        "scene": "プレゼンテーションのスライド切り替え"
+    },
+    {
+        "id": "opening-&-agenda-先に進む前",
+        "category": "Opening & Agenda",
+        "japanese": "先に進む前に質問はありますか？",
+        "english": "Any questions before we move on?",
+        "formality": "meeting",
+        "alternatives": [
+            "Does anyone have questions?",
+            "Please let me know if you have any questions",
+            "Feel free to pause me if you have questions"
+        ],
+        "example": "Any questions before we move on?",
+        "exampleJa": "先に進む前に質問はありますか？",
+        "nuance": "シンプル、定番表現",
+        "scene": "セクション区切り、次のトピックへの移行前"
+    },
+    {
+        "id": "opening-&-agenda-はじめまし",
+        "category": "Opening & Agenda",
+        "japanese": "はじめまして",
+        "english": "Nice to meet you.",
+        "formality": "meeting",
+        "alternatives": [
+            "Great to meet you",
+            "Good to see you"
+        ],
+        "example": "Nice to meet you.",
+        "exampleJa": "",
+        "nuance": "標準的なビジネス挨拶",
+        "scene": "初対面の挨拶、自己紹介"
+    },
+    {
+        "id": "opening-&-agenda-簡単に説明",
+        "category": "Opening & Agenda",
+        "japanese": "簡単に説明させてください",
+        "english": "Let me briefly explain...",
+        "formality": "meeting",
+        "alternatives": [
+            "To begin with...",
+            "First off...",
+            "Allow me to..."
+        ],
+        "example": "First, let me briefly explain the background.",
+        "exampleJa": "まず、背景を簡単に説明させてください",
+        "nuance": "前置き、次のトピックへの導入",
+        "scene": "セクションの開始、背景説明"
+    },
+    {
+        "id": "opening-&-agenda-ありがとう",
+        "category": "Opening & Agenda",
+        "japanese": "ありがとうございます（機会・時間への感謝）",
+        "english": "Thank you for taking the time today.",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "Thank you for taking the time today.",
+        "exampleJa": "",
+        "nuance": "時間を割いてくれたことへの感謝",
+        "scene": "プレゼン冒頭、ミーティング開始"
+    },
+    {
+        "id": "opening-&-agenda-少し新しい",
+        "category": "Opening & Agenda",
+        "japanese": "少し新しいことを試したい",
+        "english": "I wanted to try something a bit new.",
+        "formality": "meeting",
+        "alternatives": [
+            "Let's try a different approach today",
+            "I'd like to do something different",
+            "I want to experiment with..."
+        ],
+        "example": "For today, I wanted to try something a bit new.",
+        "exampleJa": "",
+        "nuance": "新しい試み・実験を提案",
+        "scene": "会議形式を変える時、新しいアプローチを導入"
+    },
+    {
+        "id": "opening-&-agenda-認識を合わ",
+        "category": "Opening & Agenda",
+        "japanese": "認識を合わせたい",
+        "english": "I wanted to level set",
+        "formality": "meeting",
+        "alternatives": [
+            "align on...",
+            "get on the same page",
+            "establish a shared understanding"
+        ],
+        "example": "I wanted to level set and have some conversations around what's working,",
+        "exampleJa": "",
+        "nuance": "全員が同じ理解・前提を持つようにする",
+        "scene": "プロジェクト開始、状況確認、方向性議論"
+    },
+    {
+        "id": "opening-&-agenda-全体で共通",
+        "category": "Opening & Agenda",
+        "japanese": "全体で共通認識を持つ",
+        "english": "have a shared understanding across the board",
+        "formality": "meeting",
+        "alternatives": [
+            "common understanding",
+            "aligned understanding",
+            "mutual understanding"
+        ],
+        "example": "I wanted to level set and have a shared understanding across the board.",
+        "exampleJa": "認識を合わせ、全体で共通認識を持ちたいと思います",
+        "nuance": "チーム全体・組織全体での共通理解",
+        "scene": "大きなチーム、複数ステークホルダー"
+    },
+    {
+        "id": "opening-&-agenda-今日のテー",
+        "category": "Opening & Agenda",
+        "japanese": "今日のテーマは...",
+        "english": "The theme today is...",
+        "formality": "meeting",
+        "alternatives": [
+            "The focus today is...",
+            "We'll be discussing...",
+            "Today's agenda is..."
+        ],
+        "example": "The theme today, as I might have recognized in the chat,",
+        "exampleJa": "",
+        "nuance": "会議・ディスカッションのメインテーマを提示",
+        "scene": "ディスカッションセッション、ワークショップ"
+    },
+    {
+        "id": "presentation-transitions-〜したいと",
+        "category": "Presentation Transitions",
+        "japanese": "〜したいと思います",
+        "english": "We'd like to...",
+        "formality": "meeting",
+        "alternatives": [
+            "We want to...",
+            "We aim to...",
+            "Our goal is to..."
+        ],
+        "example": "We'd like to introduce the Sidekicks initiatives,",
+        "exampleJa": "",
+        "nuance": "丁寧な提案、協力的な印象",
+        "scene": "プレゼンでのアジェンダ説明、次のトピック紹介"
+    },
+    {
+        "id": "presentation-transitions-重要なポイ",
+        "category": "Presentation Transitions",
+        "japanese": "重要なポイントを強調させてください",
+        "english": "Let me highlight...",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "Let me highlight the first challenge: scalability.",
+        "exampleJa": "最初の課題、スケーラビリティを強調させてください",
+        "nuance": "アクション志向、重要ポイントの強調",
+        "scene": "キーメッセージを伝える時"
+    },
+    {
+        "id": "presentation-transitions-それを踏ま",
+        "category": "Presentation Transitions",
+        "japanese": "それを踏まえて...",
+        "english": "With that in mind...",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "With that in mind, I'd like to propose a solution.",
+        "exampleJa": "それを踏まえて、解決策を提案したいと思います",
+        "nuance": "論理的なつながり、前提を意識",
+        "scene": "セクション間の移行、提案の前置き"
+    },
+    {
+        "id": "presentation-transitions-順を追って",
+        "category": "Presentation Transitions",
+        "japanese": "順を追って説明します",
+        "english": "Let me walk you through...",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "Let me walk you through the roadmap.",
+        "exampleJa": "ロードマップを順を追って説明させてください",
+        "nuance": "パーソナル、エンゲージング",
+        "scene": "プロセス説明、手順の解説"
+    },
+    {
+        "id": "presentation-transitions-次に移りま",
+        "category": "Presentation Transitions",
+        "japanese": "次に移ります",
+        "english": "Moving on to...",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "Moving on to the next topic, let's discuss the timeline.",
+        "exampleJa": "次のトピックに移りまして、スケジュールについて議論しましょう",
+        "nuance": "スムーズな移行",
+        "scene": "トピック切り替え"
+    },
+    {
+        "id": "presentation-transitions-左に示され",
+        "category": "Presentation Transitions",
+        "japanese": "左に示されている通り...",
+        "english": "As shown on the left...",
+        "formality": "meeting",
+        "alternatives": [
+            "Looking at the bottom...",
+            "At the top...",
+            "This diagram shows..."
+        ],
+        "example": "As shown on the left, SDO serves as Sony Group's cross-company data exchange platform.",
+        "exampleJa": "左に示されている通り、SDOはSony グループのクロスカンパニー データ交換プラットフォームとして機能します",
+        "nuance": "ビジュアル参照",
+        "scene": "スライド説明"
+    },
+    {
+        "id": "presentation-transitions-自己紹介を",
+        "category": "Presentation Transitions",
+        "japanese": "自己紹介をさせてください",
+        "english": "I'd like to briefly introduce myself",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "First, I'd like to just briefly introduce myself and tell you who I am,",
+        "exampleJa": "",
+        "nuance": "プレゼン冒頭の自己紹介導入",
+        "scene": "初対面のプレゼン、会議の開始"
+    },
+    {
+        "id": "presentation-transitions-個人的な話",
+        "category": "Presentation Transitions",
+        "japanese": "個人的な話から始めたい",
+        "english": "I wanted to start more on a personal note",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "I wanted to start more on a personal note to get to know who I am.",
+        "exampleJa": "まず個人的な話から始めて、私が誰なのかを知っていただきたいと思います",
+        "nuance": "パーソナルな関係構築を重視",
+        "scene": "チームビルディング、信頼関係構築"
+    },
+    {
+        "id": "presentation-transitions-デモをお見",
+        "category": "Presentation Transitions",
+        "japanese": "デモをお見せしたい",
+        "english": "I'd like to show you",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "Today, we have prepared a mock demo of the chat UI,",
+        "exampleJa": "",
+        "nuance": "デモ・実例を見せる導入",
+        "scene": "デモ開始、実例提示"
+    },
+    {
+        "id": "presentation-transitions-ご覧になっ",
+        "category": "Presentation Transitions",
+        "japanese": "ご覧になったように",
+        "english": "As you saw in the demo...",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "As you saw in the demo, we introduced the UX for two AI agents.",
+        "exampleJa": "デモでご覧になったように、2つのAIエージェントのUXをご紹介しました",
+        "nuance": "デモ後の振り返り",
+        "scene": "デモ後の説明、要約"
+    },
+    {
+        "id": "clarification-ここまでで",
+        "category": "Clarification",
+        "japanese": "ここまでで理解できましたか？",
+        "english": "Does that make sense?",
+        "formality": "meeting",
+        "alternatives": [
+            "Is that clear?",
+            "Are you following?",
+            "Any questions so far?"
+        ],
+        "example": "So that's our proposed framework. Does that make sense?",
+        "exampleJa": "これが我々の提案するフレームワークです。ここまでで理解できましたか？",
+        "nuance": "カジュアル寄り、対話的",
+        "scene": "複雑な説明の後、セクションの区切り"
+    },
+    {
+        "id": "clarification-念のため確",
+        "category": "Clarification",
+        "japanese": "念のため確認ですが...",
+        "english": "Just to make sure...",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "Just to make sure I understand, are you suggesting that we should clarify the boundary?",
+        "exampleJa": "念のため確認ですが、境界を明確にすべきだとおっしゃっているのでしょうか",
+        "nuance": "丁寧な確認",
+        "scene": "相手の発言を確認する時"
+    },
+    {
+        "id": "clarification-もう少し詳",
+        "category": "Clarification",
+        "japanese": "もう少し詳しく教えてください",
+        "english": "Can you please elaborate?",
+        "formality": "meeting",
+        "alternatives": [
+            "Can you tell me more about...?",
+            "Could you give me more details on...?",
+            "What do you mean by...?"
+        ],
+        "example": "Can you please elaborate on that point?",
+        "exampleJa": "その点についてもう少し詳しく教えていただけますか？",
+        "nuance": "丁寧な詳細要求",
+        "scene": "相手の説明が不十分な時、より深く理解したい時"
+    },
+    {
+        "id": "clarification-それでご質",
+        "category": "Clarification",
+        "japanese": "それでご質問に答えられていますか？",
+        "english": "Does that answer your question?",
+        "formality": "meeting",
+        "alternatives": [
+            "Did that make sense?",
+            "Is that what you were asking?",
+            "Hope that clarifies"
+        ],
+        "example": "So in summary, we'll have two separate swim lanes for October.",
+        "exampleJa": "",
+        "nuance": "相手の質問に適切に答えたか確認",
+        "scene": "長い回答の後、質問への応答確認"
+    },
+    {
+        "id": "clarification-もしまだ質",
+        "category": "Clarification",
+        "japanese": "もしまだ質問があれば",
+        "english": "Let me know if your question still remains",
+        "formality": "meeting",
+        "alternatives": [
+            "Please stop me if you have questions",
+            "Don't hesitate to interrupt if...",
+            "I'm happy to pause for questions"
+        ],
+        "example": "Allow me to walk through this slide and let me know if your question still remains.",
+        "exampleJa": "このスライドを説明しますので、まだ質問が残っていればお知らせください",
+        "nuance": "説明後に質問が解消されるか確認",
+        "scene": "質問に対して、説明で答える場合"
+    },
+    {
+        "id": "clarification-ここまでで",
+        "category": "Clarification",
+        "japanese": "ここまでで質問はありますか？",
+        "english": "Any questions so far?",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "That's the overview of the project. Any questions so far?",
+        "exampleJa": "プロジェクトの概要は以上です。ここまでで質問はありますか？",
+        "nuance": "カジュアル、オープン",
+        "scene": "セクションの区切り"
+    },
+    {
+        "id": "clarification-正しく理解",
+        "category": "Clarification",
+        "japanese": "正しく理解しているか確認させてください",
+        "english": "Let me confirm my understanding...",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "Let me confirm my understanding. We're targeting Q2 for the launch, correct?",
+        "exampleJa": "理解を確認させてください。ローンチ時期はQ2を想定しているということですね？",
+        "nuance": "フォーマル、丁寧",
+        "scene": "重要な確認"
+    },
+    {
+        "id": "opinion-&-explanation-私は〜だと",
+        "category": "Opinion & Explanation",
+        "japanese": "私は〜だと思います",
+        "english": "I think...",
+        "formality": "meeting",
+        "alternatives": [
+            "I feel...",
+            "In my view...",
+            "It seems to me that..."
+        ],
+        "example": "I think one of the most important things is making sure you guys",
+        "exampleJa": "",
+        "nuance": "最も基本的な意見表明",
+        "scene": "会議、ディスカッション、カジュアルな意見"
+    },
+    {
+        "id": "opinion-&-explanation-私の考え方",
+        "category": "Opinion & Explanation",
+        "japanese": "私の考え方は〜です",
+        "english": "The way I think about X is...",
+        "formality": "meeting",
+        "alternatives": [
+            "The way I see it",
+            "From my perspective",
+            "My view on X is..."
+        ],
+        "example": "The way I think about DX is that we're really more a startup,",
+        "exampleJa": "",
+        "nuance": "自分の視点・フレームワークを提示",
+        "scene": "戦略議論、コンセプト説明"
+    },
+    {
+        "id": "opinion-&-explanation-本当に確実",
+        "category": "Opinion & Explanation",
+        "japanese": "本当に確実にしたいことは〜",
+        "english": "What I really want to make sure is that...",
+        "formality": "meeting",
+        "alternatives": [
+            "It's important that...",
+            "I want to ensure that...",
+            "My priority is to..."
+        ],
+        "example": "What I really want to make sure is that we have a constant communication loop,",
+        "exampleJa": "",
+        "nuance": "最も重要視するポイントを強調",
+        "scene": "期待値設定、重要事項の強調"
+    },
+    {
+        "id": "opinion-&-explanation-〜について",
+        "category": "Opinion & Explanation",
+        "japanese": "〜について考えてほしい",
+        "english": "I'd love for you to think about...",
+        "formality": "meeting",
+        "alternatives": [
+            "Consider...",
+            "Think about...",
+            "I'd like you to consider..."
+        ],
+        "example": "What I'd love for you guys to think about is,",
+        "exampleJa": "",
+        "nuance": "\"want\" より柔らかい依頼、思考を促す",
+        "scene": "ワークショップ、戦略セッション"
+    },
+    {
+        "id": "opinion-&-explanation-順を追って",
+        "category": "Opinion & Explanation",
+        "japanese": "順を追って説明します",
+        "english": "I'd like to walk you through...",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "Today, I'd like to walk you through an overview of Sidekicks,",
+        "exampleJa": "",
+        "nuance": "ステップバイステップで説明する",
+        "scene": "プレゼン、プロダクト説明"
+    },
+    {
+        "id": "opinion-&-explanation-最初の/2",
+        "category": "Opinion & Explanation",
+        "japanese": "最初の/2番目の重要なポイントは〜",
+        "english": "The first key point I'd like to highlight is...",
+        "formality": "meeting",
+        "alternatives": [
+            "First of all",
+            "Secondly",
+            "The main point is..."
+        ],
+        "example": "The first key point I'd like to highlight is who we are targeting as users.",
+        "exampleJa": "最初に強調したい重要なポイントは、誰をユーザーとして対象にしているかです",
+        "nuance": "重要性を強調しながらポイント提示",
+        "scene": "プレゼン、複数ポイントの説明"
+    },
+    {
+        "id": "opinion-&-explanation-Xというよ",
+        "category": "Opinion & Explanation",
+        "japanese": "Xというよりも、Y",
+        "english": "Rather than X, our primary Y...",
+        "formality": "meeting",
+        "alternatives": [
+            "Instead of X, we focus on Y",
+            "Not X, but Y",
+            "As opposed to X"
+        ],
+        "example": "Rather than engineers or data scientists, our primary users are practitioners",
+        "exampleJa": "",
+        "nuance": "対比を使った明確化",
+        "scene": "ターゲット説明、差別化ポイント"
+    },
+    {
+        "id": "opinion-&-explanation-3つの主要",
+        "category": "Opinion & Explanation",
+        "japanese": "3つの主要な価値源があります",
+        "english": "We see three major sources of value",
+        "formality": "meeting",
+        "alternatives": [
+            "There are three main benefits",
+            "We offer three key advantages",
+            "Three critical factors are..."
+        ],
+        "example": "We see three major sources of value that Sidekicks provides.",
+        "exampleJa": "",
+        "nuance": "構造化された価値提案",
+        "scene": "プロダクト説明、提案書"
+    },
+    {
+        "id": "opinion-&-explanation-〜の観点で",
+        "category": "Opinion & Explanation",
+        "japanese": "〜の観点では",
+        "english": "In terms of...",
+        "formality": "meeting",
+        "alternatives": [
+            "As for...",
+            "Regarding...",
+            "When it comes to..."
+        ],
+        "example": "In terms of user interfaces, we are considering two main formats.",
+        "exampleJa": "ユーザーインターフェースの観点では、2つの主要な形式を検討しています",
+        "nuance": "特定の側面・観点を明示",
+        "scene": "トピック切り替え、側面別の説明"
+    },
+    {
+        "id": "opinion-&-explanation-注意してく",
+        "category": "Opinion & Explanation",
+        "japanese": "注意してください",
+        "english": "Please note that...",
+        "formality": "meeting",
+        "alternatives": [
+            "Keep in mind that...",
+            "It's important to note that...",
+            "Be aware that..."
+        ],
+        "example": "But please note that this is still a mock —",
+        "exampleJa": "",
+        "nuance": "重要な注意事項を伝える",
+        "scene": "デモ、プレゼンでの注意喚起"
+    },
+    {
+        "id": "opinion-&-explanation-私からは以",
+        "category": "Opinion & Explanation",
+        "japanese": "私からは以上です",
+        "english": "That's it from my end.",
+        "formality": "meeting",
+        "alternatives": [
+            "That's all from me",
+            "That concludes my presentation",
+            "I'll hand it over to..."
+        ],
+        "example": "That's it from my end.",
+        "exampleJa": "",
+        "nuance": "カジュアルな締めくくり",
+        "scene": "プレゼン終了、自分のパート終了"
+    },
+    {
+        "id": "opinion-&-explanation-本題に戻る",
+        "category": "Opinion & Explanation",
+        "japanese": "本題に戻ると",
+        "english": "Coming back to...",
+        "formality": "meeting",
+        "alternatives": [
+            "Going back to...",
+            "Returning to...",
+            "Back to..."
+        ],
+        "example": "So, coming back to Sidekicks...",
+        "exampleJa": "それでは、Sidekicksに戻りますが...",
+        "nuance": "脱線後に本題に戻る",
+        "scene": "補足説明後、本題復帰"
+    },
+    {
+        "id": "proposal-&-suggestion-〜を検討し",
+        "category": "Proposal & Suggestion",
+        "japanese": "〜を検討しています",
+        "english": "We are considering...",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "In terms of user interfaces, we are considering two main formats.",
+        "exampleJa": "ユーザーインターフェースについては、2つの主要な形式を検討しています",
+        "nuance": "検討中であることを示す",
+        "scene": "提案、計画説明"
+    },
+    {
+        "id": "proposal-&-suggestion-〜する予定",
+        "category": "Proposal & Suggestion",
+        "japanese": "〜する予定です",
+        "english": "We plan to...",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "We plan to provide dashboards as a dedicated interface.",
+        "exampleJa": "専用インターフェースとしてダッシュボードを提供する予定です",
+        "nuance": "計画を述べる",
+        "scene": "ロードマップ説明、将来計画"
+    },
+    {
+        "id": "proposal-&-suggestion-〜してもよ",
+        "category": "Proposal & Suggestion",
+        "japanese": "〜してもよいでしょうか？",
+        "english": "I guess, shall I take it?",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "I guess, shall I take it?",
+        "exampleJa": "では、私が進めてもよろしいでしょうか？",
+        "nuance": "控えめな確認・提案",
+        "scene": "会議で役割を引き受ける時"
+    },
+    {
+        "id": "proposal-&-suggestion-このスライ",
+        "category": "Proposal & Suggestion",
+        "japanese": "このスライドはスキップできます",
+        "english": "I guess we can skip this slide...",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "I guess we can skip this slide...",
+        "exampleJa": "",
+        "nuance": "スライドをスキップしつつ要点は伝える",
+        "scene": "プレゼンで時間調整、既知情報のスキップ"
+    },
+    {
+        "id": "proposal-&-suggestion-〜していた",
+        "category": "Proposal & Suggestion",
+        "japanese": "〜していただけると本当に嬉しいです",
+        "english": "We would really appreciate...",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "We would really appreciate any comments, ideas, or suggestions you may have.",
+        "exampleJa": "コメント、アイデア、提案などがあれば本当に嬉しいです",
+        "nuance": "感謝を込めた丁寧な依頼",
+        "scene": "プレゼン終了時、フィードバック依頼"
+    },
+    {
+        "id": "proposal-&-suggestion-明確にでき",
+        "category": "Proposal & Suggestion",
+        "japanese": "明確にできます",
+        "english": "I can help clarify.",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "If there's any questions or confusions, I can help clarify.",
+        "exampleJa": "質問や混乱があれば、明確にできます",
+        "nuance": "サポートを申し出る",
+        "scene": "質疑応答、説明の補足"
+    },
+    {
+        "id": "proposal-&-suggestion-高い価値の",
+        "category": "Proposal & Suggestion",
+        "japanese": "高い価値のあるエージェントを特定する",
+        "english": "identify high-value X",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "If we identify additional high-value agents along the way,",
+        "exampleJa": "",
+        "nuance": "価値の高いものを見つける",
+        "scene": "優先順位付け、機会発見"
+    },
+    {
+        "id": "discussion-management-少し待って",
+        "category": "Discussion Management",
+        "japanese": "少し待ってください",
+        "english": "Give me one second.",
+        "formality": "meeting",
+        "alternatives": [
+            "One moment",
+            "Hold on a second",
+            "Bear with me"
+        ],
+        "example": "Give me one second. Where's the poll?",
+        "exampleJa": "少し待ってください。投票はどこだ？",
+        "nuance": "カジュアル、準備中・探している最中",
+        "scene": "画面共有の準備、資料を探している時"
+    },
+    {
+        "id": "discussion-management-はい、どう",
+        "category": "Discussion Management",
+        "japanese": "はい、どうぞ",
+        "english": "Here you go.",
+        "formality": "meeting",
+        "alternatives": [
+            "There you go",
+            "Here we are",
+            "This is it"
+        ],
+        "example": "All right, here you go. [Poll開始]",
+        "exampleJa": "はい、どうぞ。",
+        "nuance": "何かを提示する時",
+        "scene": "画面共有開始、資料提示、Poll開始"
+    },
+    {
+        "id": "discussion-management-数分お時間",
+        "category": "Discussion Management",
+        "japanese": "数分お時間を差し上げます",
+        "english": "I'll give everyone a couple of minutes.",
+        "formality": "meeting",
+        "alternatives": [
+            "Let's take a few minutes to...",
+            "I'll give you X minutes",
+            "Feel free to take your time"
+        ],
+        "example": "I'll give everyone a couple of minutes. Pick one, and we're going to come back and talk.",
+        "exampleJa": "数分お時間を差し上げます。1つ選んで、戻ってきて話しましょう。",
+        "nuance": "参加者に考える時間・作業時間を与える",
+        "scene": "Poll投票、課題検討、Break"
+    },
+    {
+        "id": "discussion-management-誰かいます",
+        "category": "Discussion Management",
+        "japanese": "誰かいますか？",
+        "english": "Anyone?",
+        "formality": "meeting",
+        "alternatives": [
+            "Does anyone have...",
+            "Any other thoughts?",
+            "Anyone want to jump in?"
+        ],
+        "example": "Can anyone that voted for product strategy unmute and speak to why you chose it? Anyone?",
+        "exampleJa": "プロダクト戦略に投票した方、ミュート解除して選んだ理由を話していただけますか？誰かいますか？",
+        "nuance": "簡潔、誰か手を挙げてほしい時",
+        "scene": "意見を求める、質問を促す"
+    },
+    {
+        "id": "discussion-management-どうぞ話し",
+        "category": "Discussion Management",
+        "japanese": "どうぞ話してください",
+        "english": "Go for it.",
+        "formality": "meeting",
+        "alternatives": [
+            "Sure, go ahead",
+            "Please, the floor is yours",
+            "Feel free"
+        ],
+        "example": "Yeah, go for it. [Keith発言開始]",
+        "exampleJa": "はい、どうぞ。",
+        "nuance": "カジュアル、発言を促す",
+        "scene": "参加者が手を挙げた時、発言許可"
+    },
+    {
+        "id": "discussion-management-共有ありが",
+        "category": "Discussion Management",
+        "japanese": "共有ありがとうございます",
+        "english": "Thanks for sharing.",
+        "formality": "meeting",
+        "alternatives": [
+            "Thank you for that",
+            "I appreciate you sharing",
+            "Thanks for bringing that up"
+        ],
+        "example": "Okay, thanks for sharing. I personally chose outcomes as well.",
+        "exampleJa": "ありがとうございます。私も成果を選びました。",
+        "nuance": "カジュアル、意見・経験の共有への感謝",
+        "scene": "参加者の発言後"
+    },
+    {
+        "id": "discussion-management-なるほど、",
+        "category": "Discussion Management",
+        "japanese": "なるほど、理にかなっていますね",
+        "english": "That makes sense.",
+        "formality": "meeting",
+        "alternatives": [
+            "I see your point",
+            "That's a good point",
+            "I understand"
+        ],
+        "example": "Oh, thank you, thank you. It makes sense.",
+        "exampleJa": "ありがとうございます。なるほど、理にかなっていますね。",
+        "nuance": "理解・納得を示す",
+        "scene": "説明を聞いた後、提案に納得"
+    },
+    {
+        "id": "discussion-management-とても良い",
+        "category": "Discussion Management",
+        "japanese": "とても良い答えです",
+        "english": "Very good answer.",
+        "formality": "meeting",
+        "alternatives": [
+            "Good point",
+            "Excellent response",
+            "Well said"
+        ],
+        "example": "Yes, very good answer. Hence, outcomes matters, of course, right?",
+        "exampleJa": "はい、とても良い答えです。それゆえ、成果が重要なのは当然ですよね？",
+        "nuance": "回答への肯定的フィードバック",
+        "scene": "質問への回答、ディスカッションでの発言"
+    },
+    {
+        "id": "discussion-management-100%同",
+        "category": "Discussion Management",
+        "japanese": "100%同意します",
+        "english": "I 100% agree.",
+        "formality": "meeting",
+        "alternatives": [
+            "I completely agree",
+            "Absolutely",
+            "I couldn't agree more"
+        ],
+        "example": "Yes, I 100% agree, yes.",
+        "exampleJa": "はい、100%同意します。",
+        "nuance": "完全な同意を強調",
+        "scene": "強く同意する時"
+    },
+    {
+        "id": "discussion-management-では、次に",
+        "category": "Discussion Management",
+        "japanese": "では、次に進みましょう",
+        "english": "All right, okay, well, we'll move on.",
+        "formality": "meeting",
+        "alternatives": [
+            "Next question",
+            "Moving on",
+            "Let's transition to..."
+        ],
+        "example": "All right, okay, well, we'll move on. Anyone that chose business outcomes...",
+        "exampleJa": "では、次に進みましょう。ビジネス成果を選んだ方は...",
+        "nuance": "トピックを切り替える",
+        "scene": "十分に議論した後、次のトピックへ"
+    },
+    {
+        "id": "discussion-management-正解・不正",
+        "category": "Discussion Management",
+        "japanese": "正解・不正解はありません",
+        "english": "There's no right or wrong answer.",
+        "formality": "meeting",
+        "alternatives": [
+            "All answers are valid",
+            "There's no single correct answer",
+            "Every perspective is valuable"
+        ],
+        "example": "Oh, yeah, yeah, there's no right or wrong answer, yes.",
+        "exampleJa": "ああ、はい、はい、正解・不正解はありませんよ。",
+        "nuance": "自由な意見を促す、心理的安全性を作る",
+        "scene": "ブレインストーミング、オープンディスカッション"
+    },
+    {
+        "id": "time-&-next-steps-〜に戻りま",
+        "category": "Time & Next Steps",
+        "japanese": "〜に戻ります",
+        "english": "We'll come back at...",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "I'll give everyone a couple of minutes. We'll come back at six.",
+        "exampleJa": "数分お時間を差し上げます。6時に戻ってきます",
+        "nuance": "休憩後の再開時刻を指定",
+        "scene": "Poll投票、Break、個別作業時間"
+    },
+    {
+        "id": "time-&-next-steps-良い一日を",
+        "category": "Time & Next Steps",
+        "japanese": "良い一日を",
+        "english": "Hope everyone enjoys the rest of the day.",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "Hope everyone enjoys the rest of the day. We'll meet soon, again, very soon.",
+        "exampleJa": "皆さん、残りの一日を楽しんでください。また近いうちにお会いしましょう",
+        "nuance": "会議終了時の挨拶",
+        "scene": "会議の締めくくり"
+    },
+    {
+        "id": "time-&-next-steps-また近いう",
+        "category": "Time & Next Steps",
+        "japanese": "また近いうちにお会いしましょう",
+        "english": "We'll meet soon, again, very soon.",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "We'll meet soon, again, very soon. Thank you, everyone.",
+        "exampleJa": "また近いうちにお会いしましょう。ありがとうございました",
+        "nuance": "次回の約束を示唆",
+        "scene": "定例会議の終了"
+    },
+    {
+        "id": "time-&-next-steps-今日はこれ",
+        "category": "Time & Next Steps",
+        "japanese": "今日はこれで閉じます",
+        "english": "We'll close today.",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "With that, we'll close today. Hope everyone enjoys the rest of the day.",
+        "exampleJa": "それでは、今日はこれで閉じます。皆さん、良い一日を",
+        "nuance": "シンプルな会議終了",
+        "scene": "会議の締めくくり"
+    },
+    {
+        "id": "time-&-next-steps-時間がある",
+        "category": "Time & Next Steps",
+        "japanese": "時間があるときに",
+        "english": "when you have time",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "Can you check this out when you have time?",
+        "exampleJa": "時間があるときに確認してもらえる？",
+        "nuance": "急ぎではない依頼",
+        "scene": "カジュアルな依頼"
+    },
+    {
+        "id": "time-&-next-steps-FY25 ",
+        "category": "Time & Next Steps",
+        "japanese": "FY25 Q4から開始しました",
+        "english": "We have already started from FY25 Q4",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "We have already started development from FY25 Q4,",
+        "exampleJa": "",
+        "nuance": "進行中のプロジェクトのタイムライン",
+        "scene": "ロードマップ説明、進捗報告"
+    },
+    {
+        "id": "time-&-next-steps-途中で〜し",
+        "category": "Time & Next Steps",
+        "japanese": "途中で〜した場合",
+        "english": "along the way",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "If we identify additional high-value agents along the way,",
+        "exampleJa": "",
+        "nuance": "プロセスの途中で",
+        "scene": "柔軟な計画、アジャイルなアプローチ"
+    },
+    {
+        "id": "pdm-/-ai-/-marketing-データドリ",
+        "category": "PdM / AI / Marketing",
+        "japanese": "データドリブンな意思決定",
+        "english": "data-driven decision-making",
+        "formality": "meeting",
+        "alternatives": [
+            "data-informed",
+            "insight-driven",
+            "analytics-driven"
+        ],
+        "example": "The concept of Sidekicks is to accelerate business through data-driven decision-making.",
+        "exampleJa": "Sidekicksのコンセプトは、データドリブンな意思決定を通じてビジネスを加速することです",
+        "nuance": "PdM/マーケティングの定番表現",
+        "scene": "プロダクトビジョン説明、価値提案"
+    },
+    {
+        "id": "pdm-/-ai-/-marketing-ビジョンか",
+        "category": "PdM / AI / Marketing",
+        "japanese": "ビジョンから逆算する",
+        "english": "work backwards from the vision",
+        "formality": "meeting",
+        "alternatives": [
+            "start with the end in mind",
+            "reverse-engineer from the goal",
+            "work from the desired outcome"
+        ],
+        "example": "Once we have that vision outlined, we start working backwards from the vision",
+        "exampleJa": "",
+        "nuance": "Amazon文化で有名なアプローチ、顧客・成果から逆算",
+        "scene": "戦略立案、ロードマップ策定"
+    },
+    {
+        "id": "pdm-/-ai-/-marketing-現状を調整",
+        "category": "PdM / AI / Marketing",
+        "japanese": "現状を調整する",
+        "english": "calibrate on the current state",
+        "formality": "meeting",
+        "alternatives": [
+            "sync on the status",
+            "get on the same page",
+            "establish a shared understanding"
+        ],
+        "example": "The goal of this meeting is to calibrate on the current state",
+        "exampleJa": "",
+        "nuance": "\"calibrate\" = 精密に調整・較正する（単なる \"align\" より精密）",
+        "scene": "プロジェクト状況の確認、認識合わせ"
+    },
+    {
+        "id": "pdm-/-ai-/-marketing-優先順位を",
+        "category": "PdM / AI / Marketing",
+        "japanese": "優先順位をつける",
+        "english": "stack rank",
+        "formality": "meeting",
+        "alternatives": [
+            "rank order",
+            "order by priority",
+            "sequence by importance"
+        ],
+        "example": "My plan after this meeting is to stack rank the initiatives",
+        "exampleJa": "",
+        "nuance": "テック業界用語、1位から順位付け（同順位なし）",
+        "scene": "優先順位決定、リソース配分"
+    },
+    {
+        "id": "pdm-/-ai-/-marketing-エコーチェ",
+        "category": "PdM / AI / Marketing",
+        "japanese": "エコーチェンバー",
+        "english": "echo chamber",
+        "formality": "meeting",
+        "alternatives": [
+            "confirmation bias",
+            "tunnel vision",
+            "groupthink"
+        ],
+        "example": "It will be a problem of echo chamber. You may be only looking at these initiatives",
+        "exampleJa": "",
+        "nuance": "同じ意見・情報だけが循環し、新しい視点が入らない状態",
+        "scene": "戦略見直し、客観性確保の議論"
+    },
+    {
+        "id": "pdm-/-ai-/-marketing-以前は不可",
+        "category": "PdM / AI / Marketing",
+        "japanese": "以前は不可能だったワークフローを解放する",
+        "english": "unlock workflows which were previously not possible",
+        "formality": "meeting",
+        "alternatives": [
+            "enable new workflows",
+            "make possible what was impossible",
+            "remove barriers to..."
+        ],
+        "example": "AI capabilities should unlock workflows which were previously not possible,",
+        "exampleJa": "",
+        "nuance": "\"unlock\" = 制限を解除し可能にする、AIの革新的価値を強調",
+        "scene": "AIビジョン説明、プロダクト価値提案"
+    },
+    {
+        "id": "pdm-/-ai-/-marketing-個人生産性",
+        "category": "PdM / AI / Marketing",
+        "japanese": "個人生産性 vs 企業生産性",
+        "english": "individual productivity vs enterprise productivity",
+        "formality": "meeting",
+        "alternatives": [
+            "personal vs organizational productivity",
+            "micro vs macro level impact",
+            "individual vs team efficiency"
+        ],
+        "example": "What are the AI tools we can offer that can help improve their individual productivity?",
+        "exampleJa": "",
+        "nuance": "AI価値を2つの軸で評価する戦略フレームワーク",
+        "scene": "AI戦略策定、プロダクト優先順位付け"
+    },
+    {
+        "id": "pdm-/-ai-/-marketing-実用的なイ",
+        "category": "PdM / AI / Marketing",
+        "japanese": "実用的なインサイト",
+        "english": "actionable insights",
+        "formality": "meeting",
+        "alternatives": [
+            "practical insights",
+            "executable insights",
+            "operational insights"
+        ],
+        "example": "I am mainly responsible for products in the area of data analysis",
+        "exampleJa": "",
+        "nuance": "実用性・実行可能性を強調",
+        "scene": "プロダクト価値の説明、データ分析の成果物"
+    },
+    {
+        "id": "pdm-/-ai-/-marketing-スケーラブ",
+        "category": "PdM / AI / Marketing",
+        "japanese": "スケーラブル（拡張可能）",
+        "english": "scalable",
+        "formality": "meeting",
+        "alternatives": [
+            "extensible",
+            "elastic",
+            "horizontally scalable"
+        ],
+        "example": "The high level of customization made it difficult to scale efficiently.",
+        "exampleJa": "高度なカスタマイズにより、効率的にスケールすることが困難でした",
+        "nuance": "拡張可能性",
+        "scene": "プロダクト設計、技術的な課題"
+    },
+    {
+        "id": "pdm-/-ai-/-marketing-事業会社",
+        "category": "PdM / AI / Marketing",
+        "japanese": "事業会社",
+        "english": "OpCo\" / \"operating company",
+        "formality": "meeting",
+        "alternatives": [
+            "operating unit",
+            "division",
+            "subsidiary"
+        ],
+        "example": "We expect that other teams — both inside and outside Corporate DX — will also develop useful agents.",
+        "exampleJa": "",
+        "nuance": "Sony社内用語",
+        "scene": "ステークホルダー説明、プロジェクトスコープ定義"
+    },
+    {
+        "id": "pdm-/-ai-/-marketing-概念実証",
+        "category": "PdM / AI / Marketing",
+        "japanese": "概念実証",
+        "english": "PoC (Proof of Concept)",
+        "formality": "meeting",
+        "alternatives": [
+            "pilot project",
+            "prototype",
+            "MVP (Minimum Viable Product)"
+        ],
+        "example": "This project started as a PoC with one individual company in 2020,",
+        "exampleJa": "",
+        "nuance": "初期検証フェーズ",
+        "scene": "プロジェクトの経緯説明"
+    },
+    {
+        "id": "pdm-/-ai-/-marketing-BAU（通",
+        "category": "PdM / AI / Marketing",
+        "japanese": "BAU（通常業務）",
+        "english": "BAU (Business As Usual)",
+        "formality": "meeting",
+        "alternatives": [],
+        "example": "Some of the projects started as PoCs, and several of them became BAU operations.",
+        "exampleJa": "いくつかのプロジェクトはPoCとして始まり、そのうちのいくつかは通常業務となりました",
+        "nuance": "定常運用",
+        "scene": "プロジェクトフェーズの説明"
+    },
+    {
+        "id": "pdm-/-ai-/-marketing-ビジネス成",
+        "category": "PdM / AI / Marketing",
+        "japanese": "ビジネス成果",
+        "english": "business outcomes",
+        "formality": "meeting",
+        "alternatives": [
+            "results",
+            "deliverables",
+            "impact"
+        ],
+        "example": "I personally chose outcomes as well. At the end of the day, business itself cannot just be done by AI.",
+        "exampleJa": "",
+        "nuance": "PdMが最終的に責任を持つべき成果・結果",
+        "scene": "PdMの役割定義、戦略議論"
+    },
+    {
+        "id": "pdm-/-ai-/-marketing-優先順位を",
+        "category": "PdM / AI / Marketing",
+        "japanese": "優先順位をランク付けする",
+        "english": "stack rank",
+        "formality": "meeting",
+        "alternatives": [
+            "rank order",
+            "prioritize",
+            "order by priority"
+        ],
+        "example": "AI should be able to rank them, stack rank them, understand team velocity,",
+        "exampleJa": "",
+        "nuance": "テック企業特有の用語、1位から順位付け（同順位を許さない厳格なランキング）",
+        "scene": "優先順位決定、リソース配分、バックログ管理"
+    },
+    {
+        "id": "pdm-/-ai-/-marketing-顧客から逆",
+        "category": "PdM / AI / Marketing",
+        "japanese": "顧客から逆算する",
+        "english": "work backwards from the customer",
+        "formality": "meeting",
+        "alternatives": [
+            "customer-centric approach",
+            "user research",
+            "customer empathy"
+        ],
+        "example": "Customer understanding is the single highest value work we can do as PdMs.",
+        "exampleJa": "",
+        "nuance": "顧客ニーズを起点に製品・戦略を設計",
+        "scene": "プロダクト企画、戦略立案"
+    },
+    {
+        "id": "pdm-/-ai-/-marketing-成果を測定",
+        "category": "PdM / AI / Marketing",
+        "japanese": "成果を測定する",
+        "english": "measuring outcomes and learning from results",
+        "formality": "meeting",
+        "alternatives": [
+            "data-driven learning",
+            "continuous improvement",
+            "retrospective"
+        ],
+        "example": "I personally chose measuring outcomes and learning from results,",
+        "exampleJa": "",
+        "nuance": "成果測定と継続的学習のサイクル",
+        "scene": "PdMの継続的改善、学習文化"
+    },
+    {
+        "id": "pdm-/-ai-/-marketing-書くことは",
+        "category": "PdM / AI / Marketing",
+        "japanese": "書くことは考えること",
+        "english": "Writing is thinking",
+        "formality": "meeting",
+        "alternatives": [
+            "think on paper",
+            "writing clarifies thinking",
+            "the act of writing is the act of thinking"
+        ],
+        "example": "Keith: I think people should still think. I don't think AI should think for them.",
+        "exampleJa": "",
+        "nuance": "書く行為自体が思考を深める",
+        "scene": "要件定義の重要性、AIに任せるべきでない領域の説明"
+    }
+]
+};
+
+        // Load data
+        function loadPhrases() {
+            phrases = PHRASES_DATA.phrases;
+            initializeData();
+            updateCategoryFilters();
+            applyFilters();
+            updateStats();
+            loadNextPhrase();
+        }
+
+        // Initialize phrase data from localStorage
+        function initializeData() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                const data = JSON.parse(stored);
+                phrases.forEach(phrase => {
+                    const savedData = data[phrase.id];
+                    if (savedData) {
+                        phrase.correct = savedData.correct || 0;
+                        phrase.wrong = savedData.wrong || 0;
+                        phrase.lastStudied = savedData.lastStudied;
+                        phrase.mastered = savedData.mastered || false;
+                    } else {
+                        phrase.correct = 0;
+                        phrase.wrong = 0;
+                        phrase.mastered = false;
+                    }
+                });
+            } else {
+                phrases.forEach(phrase => {
+                    phrase.correct = 0;
+                    phrase.wrong = 0;
+                    phrase.mastered = false;
+                });
+            }
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            const data = {};
+            phrases.forEach(phrase => {
+                data[phrase.id] = {
+                    correct: phrase.correct,
+                    wrong: phrase.wrong,
+                    lastStudied: phrase.lastStudied,
+                    mastered: phrase.mastered
+                };
+            });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        // Update stats
+        function updateStats() {
+            const stats = getStats();
+            document.getElementById('todayCount').textContent = stats.today;
+            document.getElementById('totalCount').textContent = stats.total;
+            document.getElementById('masteredCount').textContent = stats.mastered;
+        }
+
+        // Get statistics
+        function getStats() {
+            const today = new Date().toDateString();
+            const stored = localStorage.getItem(STATS_KEY);
+            let stats = stored ? JSON.parse(stored) : { today: 0, total: 0, lastDate: today };
+
+            if (stats.lastDate !== today) {
+                stats.today = 0;
+                stats.lastDate = today;
+            }
+
+            stats.mastered = phrases.filter(p => p.mastered).length;
+
+            return stats;
+        }
+
+        // Save stats
+        function saveStats(increment = false) {
+            const stats = getStats();
+            if (increment) {
+                stats.today++;
+                stats.total++;
+            }
+            localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+            updateStats();
+        }
+
+        // Update category filters
+        function updateCategoryFilters() {
+            const categories = [...new Set(phrases.map(p => p.category))];
+            const container = document.getElementById('categoryFilters');
+            container.innerHTML = '<div class="filter-chip active" data-filter="category" data-value="all">すべて</div>';
+            categories.forEach(cat => {
+                const chip = document.createElement('div');
+                chip.className = 'filter-chip';
+                chip.dataset.filter = 'category';
+                chip.dataset.value = cat;
+                chip.textContent = cat;
+                container.appendChild(chip);
+            });
+        }
+
+        // Shuffle array
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Apply filters
+        function applyFilters() {
+            filteredPhrases = phrases.filter(phrase => {
+                if (filters.category !== 'all' && phrase.category !== filters.category) return false;
+                if (filters.formality !== 'all' && phrase.formality !== filters.formality) return false;
+                if (filters.level === 'learning' && phrase.mastered) return false;
+                if (filters.level === 'mastered' && !phrase.mastered) return false;
+                return true;
+            });
+
+            // Shuffle the filtered phrases
+            filteredPhrases = shuffleArray(filteredPhrases);
+
+            currentIndex = 0;
+
+            if (filteredPhrases.length === 0) {
+                document.getElementById('quizCard').classList.add('hidden');
+                document.getElementById('emptyState').classList.remove('hidden');
+                document.getElementById('progress').textContent = '';
+            } else {
+                document.getElementById('quizCard').classList.remove('hidden');
+                document.getElementById('emptyState').classList.add('hidden');
+            }
+        }
+
+        // Load next phrase
+        function loadNextPhrase() {
+            if (filteredPhrases.length === 0) return;
+
+            currentPhrase = filteredPhrases[currentIndex];
+            updateProgress();
+            showQuestion();
+        }
+
+        // Update progress
+        function updateProgress() {
+            const progress = `${currentIndex + 1} / ${filteredPhrases.length}`;
+            document.getElementById('progress').textContent = progress;
+        }
+
+        // Show question
+        function showQuestion() {
+            // Stop any ongoing speech
+            if (isSpeaking) {
+                window.speechSynthesis.cancel();
+                isSpeaking = false;
+                document.getElementById('speakBtn').classList.remove('speaking');
+            }
+
+            const questionText = currentMode === 'ja-en' ? currentPhrase.japanese : currentPhrase.english;
+            document.getElementById('questionText').textContent = questionText;
+            document.getElementById('cardCategory').textContent = currentPhrase.category;
+
+            const formalityMap = {
+                'email': { text: '📧 Email/Formal', class: 'formality-email' },
+                'meeting': { text: '💼 Meeting', class: 'formality-meeting' },
+                'casual': { text: '👥 Team/Casual', class: 'formality-casual' }
+            };
+
+            const formality = formalityMap[currentPhrase.formality];
+            if (formality) {
+                document.getElementById('formalityBadge').innerHTML =
+                    `<span class="formality-badge ${formality.class}">${formality.text}</span>`;
+            }
+
+            document.getElementById('questionSection').classList.remove('hidden');
+            document.getElementById('answerSection').classList.add('hidden');
+            document.getElementById('showAnswerBtn').classList.remove('hidden');
+            document.getElementById('correctBtn').classList.add('hidden');
+            document.getElementById('wrongBtn').classList.add('hidden');
+            document.getElementById('masterBtn').classList.add('hidden');
+        }
+
+        // Show answer
+        function showAnswer() {
+            const answerText = currentMode === 'ja-en' ? currentPhrase.english : currentPhrase.japanese;
+            document.getElementById('answerMain').textContent = answerText;
+
+            if (currentPhrase.alternatives && currentPhrase.alternatives.length > 0) {
+                document.getElementById('answerAlternatives').textContent =
+                    '他の言い方: ' + currentPhrase.alternatives.join(', ');
+            } else {
+                document.getElementById('answerAlternatives').textContent = '';
+            }
+
+            document.getElementById('exampleEn').textContent = currentPhrase.example;
+            document.getElementById('exampleJa').textContent = currentPhrase.exampleJa;
+
+            const metaText = `
+                💡 ${currentPhrase.nuance}<br>
+                📍 ${currentPhrase.scene}
+            `;
+            document.getElementById('answerMeta').innerHTML = metaText;
+
+            document.getElementById('questionSection').classList.add('hidden');
+            document.getElementById('answerSection').classList.remove('hidden');
+            document.getElementById('showAnswerBtn').classList.add('hidden');
+            document.getElementById('correctBtn').classList.remove('hidden');
+            document.getElementById('wrongBtn').classList.remove('hidden');
+            document.getElementById('masterBtn').classList.remove('hidden');
+        }
+
+        // Mark as correct
+        function markCorrect() {
+            currentPhrase.correct++;
+            currentPhrase.lastStudied = new Date().toISOString();
+            saveData();
+            saveStats(true);
+            nextPhrase();
+        }
+
+        // Mark as wrong
+        function markWrong() {
+            currentPhrase.wrong++;
+            currentPhrase.lastStudied = new Date().toISOString();
+            saveData();
+            saveStats(true);
+            nextPhrase();
+        }
+
+        // Toggle master
+        function toggleMaster() {
+            currentPhrase.mastered = !currentPhrase.mastered;
+            saveData();
+            updateStats();
+            const btn = document.getElementById('masterBtn');
+            btn.textContent = currentPhrase.mastered ? '再学習' : 'マスター';
+        }
+
+        // Next phrase
+        function nextPhrase() {
+            // Stop any ongoing speech
+            if (isSpeaking) {
+                window.speechSynthesis.cancel();
+                isSpeaking = false;
+                document.getElementById('speakBtn').classList.remove('speaking');
+            }
+            currentIndex = (currentIndex + 1) % filteredPhrases.length;
+            loadNextPhrase();
+        }
+
+        // Speak example sentence
+        function speakExample() {
+            if (!currentPhrase || !currentPhrase.example) return;
+
+            const speakBtn = document.getElementById('speakBtn');
+
+            // If already speaking, stop
+            if (isSpeaking) {
+                window.speechSynthesis.cancel();
+                isSpeaking = false;
+                speakBtn.classList.remove('speaking');
+                return;
+            }
+
+            // Create speech synthesis utterance
+            const utterance = new SpeechSynthesisUtterance(currentPhrase.example);
+
+            // Set language to English
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9; // Slightly slower for clarity
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+
+            // Event handlers
+            utterance.onstart = () => {
+                isSpeaking = true;
+                speakBtn.classList.add('speaking');
+            };
+
+            utterance.onend = () => {
+                isSpeaking = false;
+                speakBtn.classList.remove('speaking');
+            };
+
+            utterance.onerror = (event) => {
+                console.error('Speech synthesis error:', event);
+                isSpeaking = false;
+                speakBtn.classList.remove('speaking');
+            };
+
+            // Speak
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Event listeners
+        document.getElementById('showAnswerBtn').addEventListener('click', showAnswer);
+        document.getElementById('correctBtn').addEventListener('click', markCorrect);
+        document.getElementById('wrongBtn').addEventListener('click', markWrong);
+        document.getElementById('masterBtn').addEventListener('click', toggleMaster);
+        document.getElementById('speakBtn').addEventListener('click', speakExample);
+
+        // Controls toggle
+        document.getElementById('controlsHeader').addEventListener('click', () => {
+            const content = document.getElementById('controlsContent');
+            const toggle = document.getElementById('controlsToggle');
+            content.classList.toggle('collapsed');
+            toggle.classList.toggle('collapsed');
+        });
+
+        // Mode switch
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentMode = btn.dataset.mode;
+                loadNextPhrase();
+            });
+        });
+
+        // Filter chips
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('filter-chip')) {
+                const filterType = e.target.dataset.filter;
+                const filterValue = e.target.dataset.value;
+
+                // Remove active from siblings
+                e.target.parentElement.querySelectorAll('.filter-chip').forEach(chip => {
+                    chip.classList.remove('active');
+                });
+                e.target.classList.add('active');
+
+                filters[filterType] = filterValue;
+                applyFilters();
+                loadNextPhrase();
+            }
+        });
+
+        // PWA install prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').classList.add('show');
+        });
+
+        document.getElementById('installButton').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                document.getElementById('installPrompt').classList.remove('show');
+            }
+        });
+
+        // Initialize
+        loadPhrases();
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('Service Worker registered:', registration);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
